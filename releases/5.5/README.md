@@ -1,17 +1,19 @@
 # Kibana Sankey Diagram Plugin
 
-This is a sankey diagram visType plugin for Kibana 4.3+.
+This is a sankey diagram visType plugin for Kibana 5.5+.
 
 This plugin was developped from <https://github.com/elastic/kibana/pull/4832>.
 
-![](https://cloud.githubusercontent.com/assets/1219655/9702343/081607e6-548b-11e5-81cb-4523c8c9225d.png)
+Here is an example:
+
+![Sankey](sankey_5_5_Screenshot1.PNG)
 
 # Install
 
 ```
 git clone https://github.com/JuanCarniglia/kbn_sankey_vis.git
-cd kbn_sankey_vis
-npm install
+cd kbn_sankey_vis/releases/5.5
+npm install d3-sankey-plugin
 npm run build
 cp -R build/kbn_sankey_vis KIBANA_FOLDER_PATH/installedPlugins/
 ```
