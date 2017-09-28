@@ -1,4 +1,4 @@
-export default function (kibana) {
+module.exports = function (kibana) {
   return new kibana.Plugin({
     name: 'kbn_sankey_vis',
     require: ['kibana', 'elasticsearch'],
@@ -8,4 +8,4 @@ export default function (kibana) {
       ]
     }
   });
-}
+};
