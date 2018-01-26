@@ -38,16 +38,3 @@ set PATH=%PATH%;{rsync installation directory}\bin
 ```
 bin/kibana plugin  --remove kbn_sankey_vis
 ```
-
-# Building a Release
-Building a release only means packaging the plugin with all its dependencies into a zip archive. Important is to put the plugin in a folder called kibana before zipping it.
-The following steps would produce a release of the current head master branch.
-```
-mkdir kibana
-cd kibana
-git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
-cd sankey_vis
-npm install
-cd ../..
-zip -r sankey_vis-<version>.zip kibana --exclude kibana/sankey_vis/.git\*
-```
