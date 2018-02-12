@@ -43,11 +43,12 @@ bin/kibana plugin  --remove kbn_sankey_vis
 Building a release only means packaging the plugin with all its dependencies into a zip archive. Important is to put the plugin in a folder called kibana before zipping it.
 The following steps would produce a release of the current head master branch.
 ```
-mkdir kibana
-cd kibana
 git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
-cd sankey_vis
-npm install
+cd sankey_vis/release/
+mkdir kibana
+cp -rf <KIBANA-VERSION> kibana/sankey_vis
+cd kibana/sankey_vis
+npm install --production
 cd ../..
-zip -r sankey_vis-<version>.zip kibana --exclude kibana/sankey_vis/.git\*
+zip -r sankey_vis-<version>.zip kibana --exclude ../.git\*
 ```
