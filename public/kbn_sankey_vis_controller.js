@@ -1,11 +1,11 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const module = uiModules.get('kibana/kbn_sankey_vis', ['kibana']);
 
 import d3 from 'd3';
 import _ from 'lodash';
 import $ from 'jquery';
-import S from 'd3-plugins-sankey-fixed';
+import 'd3-plugins-sankey';
 
 import AggResponseProvider from './lib/agg_response';
 
@@ -150,7 +150,9 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
     if (resp) {
       var data = sankeyAggResponse($scope.vis, resp);
       globalData = data;
-      _buildVis(data);
+      if (data && data.slices){
+        _buildVis(data);
+      }
     }
   });
 });
