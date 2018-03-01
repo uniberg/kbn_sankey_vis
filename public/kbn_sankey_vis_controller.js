@@ -140,7 +140,7 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
       .attr('text-anchor', 'start');
 
     function dragmove(d) {
-      d3.select(svgRoot).attr('transform', 'translate(' + d.x + ',' + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ')');
+      d3.select(this).attr('transform', 'translate(' + d.x + ',' + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ')');
       sankey.relayout();
       link.attr('d', path);
     }
