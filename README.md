@@ -31,5 +31,5 @@ git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
 npm install --production
 cd ../..
-zip -r sankey_vis-<version>.zip kibana --exclude ../.git\*
+zip -r sankey_vis-<version>.zip kibana --exclude ./kibana/sankey_vis/.git\*
 ```
