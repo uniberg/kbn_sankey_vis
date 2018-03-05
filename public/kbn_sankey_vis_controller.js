@@ -8,9 +8,11 @@ import $ from 'jquery';
 import 'd3-plugins-sankey';
 
 import AggResponseProvider from './lib/agg_response';
+import validate from './lib/validate';
 
 module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
   const sankeyAggResponse = Private(AggResponseProvider);
+  $scope.emptyGraph = false;
 
   let svgRoot = $element[0];
   let color = d3.scale.category10();
@@ -39,8 +41,13 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
     }
   };
 
-
   let _buildVis = function (data) {
+    data.slices = validate({
+      nodes: data.slices.nodes, 
+      links: data.slices.links
+    });
+    $scope.emptyGraph = (data.slices.nodes.length <= 0) ;
+
     _updateDimensions();
 
     d3.select(svgRoot).selectAll('svg').remove();
