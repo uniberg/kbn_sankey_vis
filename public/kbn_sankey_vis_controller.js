@@ -8,7 +8,8 @@ import $ from 'jquery';
 import 'd3-plugins-sankey';
 
 import AggResponseProvider from './lib/agg_response';
-import validate from './lib/validate';
+import { filterNodesAndLinks } from './lib/filter';
+
 
 module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
   const sankeyAggResponse = Private(AggResponseProvider);
@@ -42,10 +43,7 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
   };
 
   let _buildVis = function (data) {
-    data.slices = validate({
-      nodes: data.slices.nodes, 
-      links: data.slices.links
-    });
+    data.slices = filterNodesAndLinks(data.slices.nodes, data.slices.links);
     $scope.emptyGraph = (data.slices.nodes.length <= 0) ;
 
     _updateDimensions();
