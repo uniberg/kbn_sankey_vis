@@ -1,3 +1,14 @@
-<div ng-controller="KbnSankeyVisController" class="metric-vis">
+<div ng-controller="KbnSankeyVisController" class="kbn-sankey" style="
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: auto;
+  position: relative;
+  padding: 8px;
+">
+  <div class="table-vis-error" ng-if="emptyGraph">
+    <h2 aria-hidden="true"><i class="fa fa-meh-o" aria-hidden="true"></i></h2>
+    <h4>No results found</h4>
+  </div>
   <div class="metric-container" ng-model="metrics"></div>
 </div>
