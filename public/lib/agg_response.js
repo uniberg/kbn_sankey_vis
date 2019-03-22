@@ -1,4 +1,4 @@
-const { arrayToLinkedList } = require('ui/agg_response/hierarchical/_array_to_linked_list');
+const { arrayToLinkedList } = require('./_array_to_linked_list');
 const { aggregate } = require('./agg_response_helper');
 
 module.exports = function sankeyProvider(Private, Notifier) {
@@ -9,11 +9,19 @@ module.exports = function sankeyProvider(Private, Notifier) {
   return function (vis, resp) {
     let buckets = vis.aggs.bySchemaGroup.buckets;
     buckets = arrayToLinkedList(buckets);
-
     if (buckets && buckets.length > 1) {
-      if (resp.tables && resp.tables.length > 0 && resp.tables[0].rows) {
-        const aggData = resp.tables[0].rows;
-        return {
+      if (resp.rows && resp.rows.length > 0) {
+        var newRows = [];
+          resp.rows.map(function(k,v){
+            for ( var property in k ) {
+                Object.defineProperty(k, property.split("-")[1],
+                        Object.getOwnPropertyDescriptor(k, property));
+                delete k[property];
+            }
+            newRows.push(_.values(k));
+            });
+            const aggData = newRows;
+         return {
           slices: aggregate(aggData)
         };
       } else {
