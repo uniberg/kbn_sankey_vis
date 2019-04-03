@@ -6,7 +6,7 @@
   import 'plugins/kbn_sankey_vis/kbn_sankey_vis_controller';
 
   import { VisFactoryProvider } from 'ui/vis/vis_factory';
-  import { VisSchemasProvider } from 'ui/vis/editors/default/schemas';
+  import { Schemas } from 'ui/vis/editors/default/schemas';
   import kbnSankeyVisTemplate from 'plugins/kbn_sankey_vis/kbn_sankey_vis.html';
 
   import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
@@ -15,12 +15,10 @@
 
   function KbnSankeyVisProvider(Private) {
     const VisFactory = Private(VisFactoryProvider);
-    let Schemas = Private(VisSchemasProvider);
-
     return VisFactory.createAngularVisualization({
       name: 'kbn_sankey',
       title: 'Sankey Diagram',
-      icon: 'fa-random',
+      legacyIcon: 'fa-random',
       description: 'Sankey charts are ideal for displaying the material, energy and cost flows.',
       visConfig: {
         defaults: {
