@@ -1,6 +1,6 @@
 # Kibana Sankey Diagram Plugin
 
-This is a sankey diagram visType plugin for Kibana 5.5+.
+This is a sankey diagram visType plugin for Kibana 6.7+.
 
 This plugin was developped from <https://github.com/elastic/kibana/pull/4832>.
 
@@ -11,7 +11,7 @@ Here is an example:
 # Install
 
 ```
-git clone https://github.com/JuanCarniglia/kbn_sankey_vis.git sankey_vis
+git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
 npm install
 ```
@@ -28,6 +28,7 @@ The following steps would produce a release of the current head master branch.
 ```
 mkdir kibana
 git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
+[optional] git checkout -branch
 cd sankey_vis
 npm install --production
 cd ../..

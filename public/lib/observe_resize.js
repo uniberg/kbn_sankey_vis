@@ -1,3 +1,4 @@
+// Borrowed from https://github.com/joola/echo-ui-plugin-sankey/blob/develop/public/lib/observe_resize.js
 module.exports = function ($elem, fn, frequency) {
 
   var currentFrequency = frequency || 500;
@@ -15,8 +16,5 @@ module.exports = function ($elem, fn, frequency) {
       checkLoop();
     }, currentFrequency);
   }
-
   checkLoop();
-
-
 };
