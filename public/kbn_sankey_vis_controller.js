@@ -1,6 +1,7 @@
 import { uiModules } from 'ui/modules';
 
 const module = uiModules.get('kibana/kbn_sankey_vis', ['kibana']);
+var observeResize = require('./lib/observe_resize');
 
 import d3 from 'd3';
 import _ from 'lodash';
@@ -43,12 +44,9 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
   };
 
   let _buildVis = function (data) {
-    data.slices = filterNodesAndLinks(data.slices.nodes, data.slices.links);
     $scope.emptyGraph = (data.slices.nodes.length <= 0) ;
 
     _updateDimensions();
-
-    d3.select(svgRoot).selectAll('svg').remove();
 
     let energy = data.slices;
     div = d3.select(svgRoot);
@@ -150,14 +148,22 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
       link.attr('d', path);
     }
   };
-
+  var _render = window.render = function (data) {
+    d3.select(svgRoot).selectAll('svg').remove();
+    _buildVis(data);
+  };
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
       var data = sankeyAggResponse($scope.vis, resp);
       globalData = data;
       if (data && data.slices){
-        _buildVis(data);
+        _render(data);
       }
+      observeResize($element, function () {
+        if (data) {
+          _render(data);
+        }
+      });
     }
   });
 });
