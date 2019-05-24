@@ -1,8 +1,9 @@
 {
   "name": "kbn_sankey_vis",
-  "version": "6.6.1",
+  "version": "6.7.1",
   "authors": [
-    "Chenryn <rao.chenlin@gmail.com>"
+    "Chenryn <rao.chenlin@gmail.com>",
+    "Ch-bas <bassem.chagra@uniberg.com>",
   ],
   "description": "Sankey Diagram Visualization Plugin",
   "license": "Apache-2.0",
