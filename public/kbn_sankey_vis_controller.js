@@ -47,7 +47,6 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
   let _buildVis = function (data) {
     if(!resize){
       data.slices=filterNodesAndLinks(data.slices.nodes, data.slices.links);
-      resize=false;
     }
     $scope.emptyGraph = (data.slices.nodes.length <= 0) ;
 
