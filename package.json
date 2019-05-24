@@ -3,7 +3,7 @@
   "version": "6.7.1",
   "authors": [
     "Chenryn <rao.chenlin@gmail.com>",
-    "Ch-bas <bassem.chagra@uniberg.com>",
+    "Ch-bas <bassem.chagra@uniberg.com>"
   ],
   "description": "Sankey Diagram Visualization Plugin",
   "license": "Apache-2.0",
