@@ -4,7 +4,7 @@ const { arrayToLinkedList } = require('./_array_to_linked_list');
 const { aggregate } = require('./agg_response_helper');
 require('ui/notify');
 
-module.exports = function sankeyProvider(Private, Notifier, createNotifier) {
+module.exports = function sankeyProvider(Private, createNotifier) {
   let notify = new createNotifier({
     location: 'Sankey chart response converter'
   });
