@@ -28,8 +28,8 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
 
   let _updateDimensions = function _updateDimensions() {
     let delta = 10;
-    let w = $(svgRoot).parent().width() - 10;
-    let h = $(svgRoot).parent().height() - 40;
+    let w = $element.parent().width() - 10;
+    let h = $element.parent().height() - 40;
     if (w) {
       if (w > delta) {
         w -= delta;
@@ -50,8 +50,6 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
     }
     $scope.emptyGraph = (data.slices.nodes.length <= 0) ;
 
-    _updateDimensions();
-
     let energy = data.slices;
     div = d3.select(svgRoot);
     if (!energy.nodes.length) return;
@@ -62,10 +60,7 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
       .append('g')
       .attr('transform', 'translate(0, 0)');
 
-    $scope.$on('change:vis', function () {
-      _updateDimensions();
-      _buildVis(globalData);
-    });
+
 
     let sankey = d3.sankey()
       .nodeWidth(15)
@@ -146,6 +141,8 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
       .attr('x', 6 + sankey.nodeWidth())
       .attr('text-anchor', 'start');
 
+    resize=false;
+
     function dragmove(d) {
       d3.select(this).attr('transform', 'translate(' + d.x + ',' + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ')');
       sankey.relayout();
@@ -156,19 +153,22 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
     d3.select(svgRoot).selectAll('svg').remove();
     _buildVis(data);
   };
+  var data;
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
-      var data = sankeyAggResponse($scope.vis, resp);
+      data = sankeyAggResponse($scope.vis, resp);
       globalData = data;
       if (data && data.slices){
+        _updateDimensions();
         _render(data);
       }
-      observeResize($element, function () {
-        if (data) {
-          resize=true;
-          _render(data);
-        }
-      });
+    }
+  });
+  observeResize($element, function () {
+    if (data) {
+      _updateDimensions();
+      resize=true;
+      _render(data);
     }
   });
 });
