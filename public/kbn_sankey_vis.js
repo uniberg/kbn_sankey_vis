@@ -1,4 +1,4 @@
-  import random from './random-solid.svg';
+  import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
 
   import 'plugins/kbn_sankey_vis/kbn_sankey_vis.less';
   import 'plugins/kbn_sankey_vis/kbn_sankey_vis_controller';
