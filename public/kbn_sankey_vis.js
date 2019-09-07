@@ -16,7 +16,7 @@
     return VisFactory.createAngularVisualization({
       name: 'kbn_sankey',
       title: 'Sankey Diagram',
-      icon: random,
+      image: random,
       description: 'Sankey charts are ideal for displaying the material, energy and cost flows.',
       visConfig: {
         defaults: {
