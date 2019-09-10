@@ -1,6 +1,4 @@
-
-  import 'ui/agg_table';
-  import 'ui/agg_table/agg_table_group';
+  import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
 
   import 'plugins/kbn_sankey_vis/kbn_sankey_vis.less';
   import 'plugins/kbn_sankey_vis/kbn_sankey_vis_controller';
@@ -18,7 +16,7 @@
     return VisFactory.createAngularVisualization({
       name: 'kbn_sankey',
       title: 'Sankey Diagram',
-      legacyIcon: 'fa-random',
+      image: random,
       description: 'Sankey charts are ideal for displaying the material, energy and cost flows.',
       visConfig: {
         defaults: {
