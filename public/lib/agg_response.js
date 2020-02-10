@@ -2,6 +2,7 @@
 // _array_to_linked_list should be imported from the removed directory 'ui/agg_response/hierarchical/_array_to_linked_list'
 const { arrayToLinkedList } = require('./_array_to_linked_list');
 const { aggregate } = require('./agg_response_helper');
+const { bucketReplaceProperty } = require('./bucket_replace_property_helper');
 require('ui/notify');
 
 module.exports = function sankeyProvider(Private, createNotifier) {
@@ -10,6 +11,18 @@ module.exports = function sankeyProvider(Private, createNotifier) {
   });
 
   return function (vis, resp) {
+    // When 'Show missing values' and/or 'Group bucket' is checked then
+    // group the inputs in different arrays
+    let missingValues = [];
+    let groupBucket = [];
+    resp.columns.forEach((bucket) => {
+      if(bucket.aggConfig.params.missingBucket) {
+        missingValues.push({[bucket.id]: bucket.aggConfig.params.missingBucketLabel});
+      }
+      if(bucket.aggConfig.params.otherBucket) {
+        groupBucket.push({[bucket.id]: bucket.aggConfig.params.otherBucketLabel});
+      }
+    });
     let buckets = vis.aggs.bySchemaGroup.buckets;
     if (buckets) {
       buckets = arrayToLinkedList(buckets);
@@ -19,13 +32,25 @@ module.exports = function sankeyProvider(Private, createNotifier) {
           // In the new kibana version, the rows are of type object , where they should be of type array to match the rest of the algorithm .
           // This is a workaround to convert the object ( 'col-0-2' : [array]... ) to (0 : [array])
           var newRows = [];
-          resp.rows.map(function(k,v){
-            for ( var property in k ) {
-              Object.defineProperty(k, property.split("-")[1],
-                  Object.getOwnPropertyDescriptor(k, property));
-              delete k[property];
+          // The structure of the bucket is as follow: { col-0-1: string, col-0-2: string... }
+          resp.rows.forEach(function(bucket){
+          // Cell refers to col-0-1, col-0-2...
+            for (let cell in bucket) {
+              // Update the bucket if 'Show missing values' is checked
+              // by default, the value is '__missing__'
+              // kibana/kibana-repo/src/ui/public/agg_types/buckets/terms.js
+              if(bucket[cell] === '__missing__') {
+                bucketReplaceProperty(missingValues,bucket);
+              }
+              // Update the bucket if 'Group other bucket' is checked
+              if(bucket[cell] === '__other__') {
+                bucketReplaceProperty(groupBucket,bucket);
+              }
+              Object.defineProperty(bucket, cell.split("-")[1],
+                  Object.getOwnPropertyDescriptor(bucket, cell));
+              delete bucket[cell];
             }
-            newRows.push(_.values(k));
+            newRows.push(_.values(bucket));
           });
           //end Workaround
           const aggData = newRows;
