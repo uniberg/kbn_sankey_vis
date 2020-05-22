@@ -13,7 +13,7 @@
  *    ...
  *  }
  */
-export function bucketReplaceProperty(sourceBucket, destinationBucket) {
+export const bucketReplaceProperty = (sourceBucket, destinationBucket) => {
   for(let bucketArray of sourceBucket) {
     Object.getOwnPropertyNames(bucketArray).forEach( (cell) => {
         if (destinationBucket.hasOwnProperty(cell)) {

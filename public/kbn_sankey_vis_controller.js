@@ -153,6 +153,9 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
   };
   let data;
   $scope.$watch('esResponse', function (resp) {
+    console.log(resp);
+    console.log($scope.vis);
+
     if (resp) {
       data = sankeyAggResponse($scope.vis, resp);
       globalData = data;
