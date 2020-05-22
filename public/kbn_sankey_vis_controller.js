@@ -1,16 +1,14 @@
+// Kibana Dependencies
 import { uiModules } from 'ui/modules';
 
-const module = uiModules.get('kibana/kbn_sankey_vis', ['kibana']);
-var observeResize = require('./lib/observe_resize');
-
+// Own Dependencies
 import d3 from 'd3';
-import _ from 'lodash';
-import $ from 'jquery';
 import 'd3-plugins-sankey';
-
 import AggResponseProvider from './lib/agg_response';
 import { filterNodesAndLinks } from './lib/filter';
 
+const module = uiModules.get('kibana/kbn_sankey_vis', ['kibana']);
+let observeResize = require('./lib/observe_resize');
 
 module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
   const sankeyAggResponse = Private(AggResponseProvider);
@@ -149,11 +147,11 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
       link.attr('d', path);
     }
   };
-  var _render = window.render = function (data) {
+  let _render = window.render = function (data) {
     d3.select(svgRoot).selectAll('svg').remove();
     _buildVis(data);
   };
-  var data;
+  let data;
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
       data = sankeyAggResponse($scope.vis, resp);
