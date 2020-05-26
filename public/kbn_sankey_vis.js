@@ -1,23 +1,21 @@
-  import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
-
-  import 'plugins/kbn_sankey_vis/kbn_sankey_vis.less';
-  import 'plugins/kbn_sankey_vis/kbn_sankey_vis_controller';
-
-  import { VisFactoryProvider } from 'ui/vis/vis_factory';
+  // Kibana Dependencies
+  import { npSetup } from 'ui/new_platform';
+  import { AngularVisController } from 'ui/vis/vis_types/angular_vis_type';
   import { Schemas } from 'ui/vis/editors/default/schemas';
+  import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
+
+  // Own Dependencies
+  import  KbnSankeyVisController from './kbn_sankey_vis_controller'
+  import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
+  import 'plugins/kbn_sankey_vis/kbn_sankey_vis.less';
   import kbnSankeyVisTemplate from 'plugins/kbn_sankey_vis/kbn_sankey_vis.html';
 
-  import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-
-  VisTypesRegistryProvider.register(KbnSankeyVisProvider);
-
-  function KbnSankeyVisProvider(Private) {
-    const VisFactory = Private(VisFactoryProvider);
-    return VisFactory.createAngularVisualization({
+  const sankeyDef = {
       name: 'kbn_sankey',
       title: 'Sankey Diagram',
       image: random,
       description: 'Sankey charts are ideal for displaying the material, energy and cost flows.',
+      visualization: AngularVisController,
       visConfig: {
         defaults: {
           showMetricsAtAllLevels: false
@@ -52,8 +50,6 @@
         ])
       },
       requiresSearch: true
-    });
-  }
-
-// export the provider so that the visType can be required with Private()
-export default KbnSankeyVisProvider;
+    };
+  npSetup.plugins.expressions.registerFunction(sankeyDef);
+  visualizations.types.createBaseVisualization(sankeyDef);
