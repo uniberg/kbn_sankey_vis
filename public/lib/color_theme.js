@@ -1,3 +1,29 @@
+/*
+ * Adapted from Kibana's set_is_reversed.js
+ * (originally at https://github.com/elastic/kibana/blob/bf04235/
+ *    src/plugins/vis_type_timeseries/public/application/lib/set_is_reversed.js)
+ * for use in kbn_sankey_vis plugin.
+ *
+ * Kibana's original license terms for set_is_reversed.js are as follows:
+ *
+ * Licensed to Elasticsearch B.V. under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch B.V. licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import color from 'color';
 import { getUISettings } from '../../../../src/legacy/core_plugins/visualizations/public/np_ready/public/services';
 
