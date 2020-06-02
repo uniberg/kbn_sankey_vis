@@ -1,6 +1,5 @@
 // Kibana Dependencies
 import { uiModules } from 'ui/modules';
-import chrome from 'ui/chrome';
 
 // Own Dependencies
 import d3 from 'd3';
