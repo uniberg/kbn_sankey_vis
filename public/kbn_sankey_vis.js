@@ -14,7 +14,7 @@
       name: 'kbn_sankey',
       title: 'Sankey Diagram',
       image: random,
-      description: 'Sankey charts are ideal for displaying the material, energy and cost flows.',
+      description: 'A sankey diagram is a type of flow diagram where flow quantities are depicted by proportional arrow magnitutes.',
       visualization: AngularVisController,
       visConfig: {
         defaults: {
