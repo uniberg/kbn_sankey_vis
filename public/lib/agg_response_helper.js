@@ -1,6 +1,7 @@
 /**
  * TODO: Description
  */
+const { bucketReplaceProperty } = require('./bucket_replace_property_helper');
 
 const stringify = require('json-stable-stringify');
 
@@ -15,7 +16,7 @@ module.exports = (function() {
         nodesMap.set(nodeKeyStr, nodeName);
       });
     });
-    return nodesMap; 
+    return nodesMap;
   }
 
   // TODO: Json in Json -> ugly code
@@ -41,7 +42,7 @@ module.exports = (function() {
         const targetNodeId = _getNodeId(layer + 1, targetNodeName);
 
         const linkKeyStr = stringify({ sourceNodeId, targetNodeId });
-        
+
         const oldValue = linksMap.get(linkKeyStr);
         if (oldValue) {
           // Sum up values
@@ -74,7 +75,7 @@ module.exports = (function() {
       const node1Name = node1.name.toString();
       const node2Name = node2.name.toString();
       return node1Name.localeCompare(node2Name);
-    });  
+    });
     return nodeArray;
   }
 
@@ -90,8 +91,42 @@ module.exports = (function() {
     });
     return links;
   }
+  function _convertObjectToArray({rows, missingValues, groupBucket}) {
+    // In the new kibana version, the rows are of type object , where they should be of type array to match the rest of the algorithm .
+    // This is a function to convert the object ( 'col-0-2' : [array]... ) to (0 : [array])
+    let newRows = [];
+    // The structure of the bucket is as follow: { col-0-1: string, col-0-2: string... }
+    rows.map(function(bucket) {
+      // Object in javascript are mutable, this is why we should create a copy and then update it without modifying the original 'resp.rows'
+      // otherwise the rest of the application will be broken
+      // https://github.com/uniberg/kbn_sankey_vis/issues/14
+      const bucketCopy = Object.assign({}, bucket);
+      // Cell refers to col-0-1, col-0-2...
+      for (let cell in bucketCopy) {
+        // Update the bucket if 'Show missing values' is checked
+        // by default, the value is '__missing__'
+        // kibana/kibana-repo/src/ui/public/agg_types/buckets/terms.js
+        if (bucketCopy[cell] === '__missing__') {
+          bucketReplaceProperty(missingValues, bucketCopy);
+        }
+        // Update the bucket if 'Group other bucket' is checked
+        if (bucketCopy[cell] === '__other__') {
+          bucketReplaceProperty(groupBucket, bucketCopy);
+        }
+        Object.defineProperty(
+          bucketCopy,
+          cell.split('-')[1],
+          Object.getOwnPropertyDescriptor(bucketCopy, cell)
+        );
+        delete bucketCopy[cell];
+      }
+      newRows.push(_.values(bucketCopy));
+    });
 
-  function aggregate(paths) {
+    return newRows;
+  }
+  function aggregate({rows, missingValues, groupBucket}) {
+    const paths = _convertObjectToArray({rows, missingValues, groupBucket});
     const nodesMap = _generateNodesMap(paths);
     const linksMap = _generateLinksMap(paths, nodesMap);
     const nodes = _generateSortedNodeArray(nodesMap);
@@ -99,7 +134,7 @@ module.exports = (function() {
     const convertedLinks = _convertLinksMapToArray(linksMap, nodeIdMap);
     const cleanedD3Nodes = nodes.map(({name}) => { return { name }; });
 
-    return { 
+    return {
       nodes: cleanedD3Nodes,
       links: convertedLinks
     };
@@ -113,7 +148,7 @@ module.exports = (function() {
     _generateNodeIdMap,
     _generateSortedNodeArray,
     _convertLinksMapToArray,
-    
+
     aggregate
   };
 
