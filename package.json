@@ -14,7 +14,7 @@
     "test": "nyc --all mocha"
   },
   "dependencies": {
-    "d3-plugins-sankey": "^1.2.1",
+    "d3-plugins-sankey": "https://github.com/uniberg/d3-plugins-sankey.git",
     "json-stable-stringify": "^1.0.1"
   },
   "devDependencies": {
