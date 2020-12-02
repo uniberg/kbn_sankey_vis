@@ -65,16 +65,10 @@ module.exports = (function() {
     return nodeIdMap;
   }
 
-  function _generateSortedNodeArray(nodesMap) {
+  function _generateNodeArray(nodesMap) {
     const nodeArray = [];
-    // create sort array
     nodesMap.forEach((nodeName, nodeId) => {
       nodeArray.push({ nodeId, name: nodeName });
-    });
-    nodeArray.sort((node1,node2) => {
-      const node1Name = node1.name.toString();
-      const node2Name = node2.name.toString();
-      return node1Name.localeCompare(node2Name);
     });
     return nodeArray;
   }
@@ -129,7 +123,7 @@ module.exports = (function() {
     const paths = _convertObjectToArray({rows, missingValues, groupBucket});
     const nodesMap = _generateNodesMap(paths);
     const linksMap = _generateLinksMap(paths, nodesMap);
-    const nodes = _generateSortedNodeArray(nodesMap);
+    const nodes = _generateNodeArray(nodesMap);
     const nodeIdMap = _generateNodeIdMap(nodes);
     const convertedLinks = _convertLinksMapToArray(linksMap, nodeIdMap);
     const cleanedD3Nodes = nodes.map(({name}) => { return { name }; });
@@ -146,7 +140,7 @@ module.exports = (function() {
     _getNodeId,
     _generateLinksMap,
     _generateNodeIdMap,
-    _generateSortedNodeArray,
+    _generateNodeArray,
     _convertLinksMapToArray,
 
     aggregate
