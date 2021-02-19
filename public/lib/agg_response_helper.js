@@ -100,12 +100,12 @@ module.exports = (function() {
         // Update the bucket if 'Show missing values' is checked
         // by default, the value is '__missing__'
         // kibana/kibana-repo/src/ui/public/agg_types/buckets/terms.js
-        if (bucketCopy[cell] === '__missing__') {
-          bucketReplaceProperty(missingValues, bucketCopy);
+        if (bucketCopy[cell] === '__missing__' && missingValues.length > 0) {
+          bucketReplaceProperty(missingValues, bucketCopy, cell);
         }
         // Update the bucket if 'Group other bucket' is checked
-        if (bucketCopy[cell] === '__other__') {
-          bucketReplaceProperty(groupBucket, bucketCopy);
+        if (bucketCopy[cell] === '__other__' && groupBucket.length > 0) {
+          bucketReplaceProperty(groupBucket, bucketCopy, cell);
         }
         Object.defineProperty(
           bucketCopy,

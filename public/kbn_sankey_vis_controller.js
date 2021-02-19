@@ -1,19 +1,31 @@
-// Kibana Dependencies
-import { uiModules } from 'ui/modules';
+/*
+ * Licensed to Elasticsearch B.V. under one or more contributor
+ * license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright
+ * ownership. Elasticsearch B.V. licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 // Own Dependencies
 import d3 from 'd3';
 import 'd3-plugins-sankey';
-import AggResponseProvider from './lib/agg_response';
 import { filterNodesAndLinks } from './lib/filter';
-import { isBackgroundDark, appropriateTextColor } from './lib/color_theme';
+// import { isBackgroundDark, appropriateTextColor } from './lib/color_theme';
 
-const module = uiModules.get('kibana/kbn_sankey_vis', ['kibana']);
 let observeResize = require('./lib/observe_resize');
 
-module.controller('KbnSankeyVisController', function ($scope, $element, $rootScope, Private) {
-  const sankeyAggResponse = Private(AggResponseProvider);
-  $scope.emptyGraph = false;
+function KbnSankeyVisController ($scope, $element) {
 
   let svgRoot = $element[0];
   let resize = false;
@@ -24,7 +36,13 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
   let div;
   let svg;
   let globalData = null;
+  const uiStateSort = ($scope.uiState) ? $scope.uiState.get('vis.params.sort') : {};
+  _.assign($scope.visParams.sort, uiStateSort);
 
+  $scope.sort = $scope.visParams.sort;
+  $scope.$watchCollection('sort', function (newSort) {
+    $scope.uiState.set('vis.params.sort', newSort);
+  });
   let _updateDimensions = function _updateDimensions() {
     let delta = 10;
     let w = $element.parent().width() - 10;
@@ -124,7 +142,7 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
         return d.color;
       })
       .style('stroke', function (d) {
-        return (isBackgroundDark(null, null)) ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
+        return 1 === 1 ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
       })
       .append('title')
       .text(function (d) {
@@ -137,7 +155,6 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
         return d.dy / 2;
       })
       .attr('dy', '.35em')
-      .style('fill', appropriateTextColor(null, null))
       .attr('text-anchor', 'end')
       .attr('transform', null)
       .text(function (d) {
@@ -189,22 +206,36 @@ module.controller('KbnSankeyVisController', function ($scope, $element, $rootSco
     d3.select(svgRoot).selectAll('svg').remove();
     _buildVis(data);
   };
-  let data;
-  $scope.$watch('esResponse', function (resp) {
-    if (resp) {
-      data = sankeyAggResponse($scope.vis, resp);
-      globalData = data;
-      if (data && data.slices){
-        _updateDimensions();
-        _render(data);
+  $scope.$watch('renderComplete', function () {
+
+    if ($scope.esResponse && $scope.esResponse.newResponse) {
+      globalData = $scope.esResponse;
+      _updateDimensions();
+      _render($scope.esResponse);
+      // init tableGroups
+      $scope.hasSomeRows = null;
+      $scope.hasSomeData = null;
+      $scope.tableGroups = null;
+      $scope.esResponse.newResponse = false;
+      const totalHits = $scope.esResponse.totalHits;
+      // no data to display
+      if (totalHits === 0) {
+        $scope.hasSomeRows = false;
+        $scope.hasSomeData = false;
+        $scope.renderComplete();
+        return;
       }
     }
+
+    $scope.renderComplete();
   });
   observeResize($element, function () {
-    if (data) {
+    if (globalData) {
       _updateDimensions();
       resize=true;
-      _render(data);
+      _render(globalData);
     }
   });
-});
+}
+
+export { KbnSankeyVisController };
