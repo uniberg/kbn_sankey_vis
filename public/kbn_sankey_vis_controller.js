@@ -25,8 +25,10 @@ import { filterNodesAndLinks } from './lib/filter';
 
 let observeResize = require('./lib/observe_resize');
 
-function KbnSankeyVisController ($scope, $element) {
-
+function KbnSankeyVisController ($scope, $element, config) {
+  const getConfig = (...args) => config.get(...args);
+  const lightTextColor = "#CBCFCB";
+  const darkTextColor = "#000000";
   let svgRoot = $element[0];
   let resize = false;
   let color = d3.scale.category20();
@@ -142,7 +144,7 @@ function KbnSankeyVisController ($scope, $element) {
         return d.color;
       })
       .style('stroke', function (d) {
-        return 1 === 1 ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
+        return getConfig('theme:darkMode') ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
       })
       .append('title')
       .text(function (d) {
@@ -155,6 +157,7 @@ function KbnSankeyVisController ($scope, $element) {
         return d.dy / 2;
       })
       .attr('dy', '.35em')
+      .style('fill', getConfig('theme:darkMode') ? lightTextColor : darkTextColor)
       .attr('text-anchor', 'end')
       .attr('transform', null)
       .text(function (d) {
@@ -212,16 +215,10 @@ function KbnSankeyVisController ($scope, $element) {
       globalData = $scope.esResponse;
       _updateDimensions();
       _render($scope.esResponse);
-      // init tableGroups
-      $scope.hasSomeRows = null;
-      $scope.hasSomeData = null;
-      $scope.tableGroups = null;
-      $scope.esResponse.newResponse = false;
       const totalHits = $scope.esResponse.totalHits;
       // no data to display
       if (totalHits === 0) {
-        $scope.hasSomeRows = false;
-        $scope.hasSomeData = false;
+        $scope.emptyGraph = false;
         $scope.renderComplete();
         return;
       }

@@ -1,21 +1,11 @@
 <div ng-controller="KbnSankeyVisController" class="kbn-sankey">
-
-  <div ng-if="!hasSomeRows && hasSomeRows !== null" class="visError">
+  <div ng-if="emptyGraph" class="visError">
     <div class="euiText euiText--extraSmall euiTextColor euiTextColor--subdued">
-      <icon type="'visualizeApp'" size="'m'" color="'subdued'"></icon>
-
-      <br>
-      <br>
-
-      <p
-        i18n-id="visTypeTable.vis.noResultsFoundTitle"
-        i18n-default-message="No results found">
-      </p>
+      No results found
     </div>
   </div>
 
-  <div ng-if="hasSomeRows" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
-    pppppp {{hasSomeRows}}
+  <div ng-if="!emptyGraph" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
     <kbn-enhanced-agg-table-group
       filter="vis.API.events.filter"
       group="tableGroups"

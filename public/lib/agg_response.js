@@ -19,7 +19,7 @@
 
 const { aggregate } = require('./agg_response_helper');
 import { bucketHelper } from './bucket_helper';
-
+import { getNotifications } from '../services';
 export function sankeyProvider(resp) {
   // When 'Show missing values' and/or 'Group bucket' is checked then
   // group the inputs in different arrays
@@ -36,7 +36,7 @@ export function sankeyProvider(resp) {
     }
   });
 
-  if (resp.rows.length > 1) {
+  if (resp.columns.length > 2) {
     if (resp.rows && resp.rows.length > 0) {
       return {
         slices: aggregate({
@@ -46,11 +46,13 @@ export function sankeyProvider(resp) {
         }), totalHits: resp.totalHits, aggs: resp.aggs, newResponse: true
       };
     } else {
+      getNotifications().toasts.addWarning({title: 'Warning', text: 'Minimum two sub aggs needed.'});
       return {
         slices: { nodes: [], links: [] }, totalHits: resp.totalHits, aggs: resp.aggs, newResponse: true
       };
     }
   } else {
+    getNotifications().toasts.addWarning({title: 'Warning', text: 'Minimum two sub aggs needed.'});
     return {
       slices: { nodes: [], links: [] }, totalHits: resp.totalHits, aggs: resp.aggs, newResponse: true
     };
