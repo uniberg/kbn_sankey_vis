@@ -46,7 +46,6 @@ export function sankeyProvider(resp) {
         }), totalHits: resp.totalHits, aggs: resp.aggs, newResponse: true
       };
     } else {
-      getNotifications().toasts.addWarning({title: 'Warning', text: 'Minimum two sub aggs needed.'});
       return {
         slices: { nodes: [], links: [] }, totalHits: resp.totalHits, aggs: resp.aggs, newResponse: true
       };

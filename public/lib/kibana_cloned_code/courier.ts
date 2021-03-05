@@ -193,5 +193,14 @@ export const handleCourierRequest = async ({
     );
   }
 
+  inspectorAdapters.data.setTabularLoader(
+    () =>
+      buildTabularInspectorData((searchSource as any).tabifiedResponse, {
+        queryFilter: filterManager,
+        deserializeFieldFormat: getFieldFormats().deserialize,
+      }),
+    { returnsFormattedValues: true }
+  );
+
   return (searchSource as any).tabifiedResponse;
 };

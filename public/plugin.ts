@@ -22,7 +22,7 @@ import { VisualizationsSetup } from '../../../src/plugins/visualizations/public'
 import { sankeyTypeDefinition } from './kbn_sankey_vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setNotifications, setQueryService, setSearchService } from './services';
+import { setNotifications, setQueryService, setSearchService, setFormatService } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
 
 
@@ -56,6 +56,7 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
   }
 
   public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
+    setFormatService(data.fieldFormats);
     setNotifications(core.notifications);
     setQueryService(data.query);
     setSearchService(data.search);

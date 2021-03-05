@@ -32,3 +32,7 @@ export const [getQueryService, setQueryService] = createGetterSetter<
 export const [getSearchService, setSearchService] = createGetterSetter<
   DataPublicPluginStart['search']
 >('Search');
+
+export const [getFormatService, setFormatService] = createGetterSetter<
+  DataPublicPluginStart['fieldFormats']
+  >('table data.fieldFormats');

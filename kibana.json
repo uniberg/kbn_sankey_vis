@@ -1,6 +1,6 @@
 {
   "id": "kbnSankeyVis",
-  "version": "7.10.1",
+  "version": "kibana",
   "server": false,
   "ui": true,
   "requiredPlugins": [
@@ -8,5 +8,9 @@
     "data",
     "inspector",
     "kibanaLegacy"
+  ],
+  "requiredBundles": [
+    "kibanaUtils",
+    "visDefaultEditor"
   ]
 }

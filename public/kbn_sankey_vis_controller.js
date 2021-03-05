@@ -209,7 +209,7 @@ function KbnSankeyVisController ($scope, $element, config) {
     d3.select(svgRoot).selectAll('svg').remove();
     _buildVis(data);
   };
-  $scope.$watch('renderComplete', function () {
+  $scope.$watch('esResponse', function () {
 
     if ($scope.esResponse && $scope.esResponse.newResponse) {
       globalData = $scope.esResponse;
