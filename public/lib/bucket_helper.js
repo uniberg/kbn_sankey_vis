@@ -10,5 +10,6 @@
  * ]
 */
 export const bucketHelper = (response, bucket) => {
-  return(response.columns.find( column => column.name.search(bucket.params.field.displayName) !== -1));
+  return(response.columns.find( column => bucket.params.customLabel === '' ?
+    column.name.search(bucket.params.field.displayName) !== -1 : column.name.search(bucket.params.customLabel) !== -1));
 };
