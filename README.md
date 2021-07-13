@@ -6,20 +6,25 @@ This plugin was developped from <https://github.com/elastic/kibana/pull/4832>.
 
 Here is an example:
 
-![Sankey](sankey_5_5_Screenshot1.PNG)
+![Sankey](sankey_7_10_Screenshot1.png)
 
 # Install
 
 ```
 git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
-npm install
+yarn install
+yarn start
 ```
-
+# Use
+* Navigate to Kibana (http://localhost:5601).
+* Go to "Visualize" app.
+* Click "Create visualization".
+* Choose "Sankey Diagram"
 # Uninstall
 
 ```
-bin/kibana plugin  --remove kbn_sankey_vis
+bin/kibana-plugin remove kbn-sankey-vis
 ```
 
 # Building a Release
@@ -30,7 +35,6 @@ mkdir kibana
 git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
 [optional] git checkout -branch
-npm install --production
-cd ../..
-zip -r sankey_vis-<version>.zip kibana --exclude ./kibana/sankey_vis/.git\*
+yarn install
+yarn build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ```

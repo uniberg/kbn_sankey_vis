@@ -9,12 +9,7 @@
  *  ...
  * ]
 */
-export const bucketHelper = (response, bucket, label) => {
-  let tmpArr = [];
-  response.columns.find( column => {
-    if ((column.name.search(bucket.params.field.name) !== -1)) {
-      tmpArr.push({[column.id]: label});
-    }
-  })
-  return tmpArr;
-}
+export const bucketHelper = (response, bucket) => {
+  return(response.columns.find( column =>
+    column.meta.aggConfigParams.field.search(bucket.params.field.displayName) !== -1 ));
+};

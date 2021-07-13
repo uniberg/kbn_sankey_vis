@@ -1,14 +1,24 @@
-<div ng-controller="KbnSankeyVisController" class="kbn-sankey" style="
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow: auto;
-  position: relative;
-  padding: 8px;
-">
-  <div class="table-vis-error" ng-if="emptyGraph">
-    <h2 aria-hidden="true"><i class="fa fa-meh-o" aria-hidden="true"></i></h2>
-    <h4>No results found</h4>
+<div ng-controller="KbnSankeyVisController" class="kbn-sankey">
+  <div ng-if="emptyGraph" class="visError">
+    <div class="euiText euiText--extraSmall euiTextColor euiTextColor--subdued">
+      No results found
+    </div>
   </div>
-  <div class="metric-container" ng-model="metrics"></div>
+
+  <div ng-if="!emptyGraph" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
+    <kbn-enhanced-agg-table-group
+      filter="vis.API.events.filter"
+      group="tableGroups"
+      export-title="visState.title"
+      per-page="visState.params.perPage"
+      sort="sort"
+      show-total="visState.params.showTotal"
+      total-func="visState.params.totalFunc"
+      csv-export-with-total="visState.params.csvExportWithTotal && visState.params.showTotal"
+      csv-full-export="visState.params.csvFullExport && visState.params.computedColumns.length === 0 && !visState.params.linesComputedFilter && !visState.params.hiddenColumns && !visState.params.csvExportWithTotal && !visState.params.addRowNumberColumn"
+      csv-encoding="visState.params.csvEncoding || 'utf-8'"
+      field-columns="visState.params.fieldColumns">
+
+    </kbn-enhanced-agg-table-group>
+  </div>
 </div>

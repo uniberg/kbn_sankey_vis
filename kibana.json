@@ -1,0 +1,14 @@
+{
+  "id": "kbnSankeyVis",
+  "version": "kibana",
+  "server": false,
+  "ui": true,
+  "requiredPlugins": [
+    "visualizations",
+    "data",
+    "inspector",
+    "kibanaLegacy",
+    "kibanaUtils",
+    "visDefaultEditor"
+  ]
+}

@@ -1,6 +1,9 @@
 {
-  "name": "kbn_sankey_vis",
-  "version": "7.6.3",
+  "name": "kbn-sankey-vis",
+  "version": "7.10.1",
+  "kibana": {
+    "version": "kibana"
+  },
   "authors": [
     "Chenryn <rao.chenlin@gmail.com>",
     "Ch-bas <bassem.chagra@uniberg.com>"
@@ -11,14 +14,17 @@
   "repository": "https://github.com/uniberg/kbn_sankey_vis.git",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --all mocha"
+    "start": "cd ../.. && node scripts/kibana --dev --oss",
+    "test": "nyc --all mocha",
+    "build": "yarn plugin-helpers build",
+    "plugin-helpers": "node ../../scripts/plugin_helpers"
   },
   "dependencies": {
     "d3-plugins-sankey": "https://github.com/uniberg/d3-plugins-sankey.git",
     "json-stable-stringify": "^1.0.1"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.10.2",
+    "@fortawesome/fontawesome-free": "5.15.2",
     "mocha": "~5.0.4",
     "nyc": "^13.3.0"
   }
