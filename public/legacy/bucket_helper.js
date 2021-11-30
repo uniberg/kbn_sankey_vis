@@ -11,5 +11,5 @@
 */
 export const bucketHelper = (response, bucket) => {
   return(response.columns.find( column =>
-    column.meta.aggConfigParams.field.search(bucket.params.field.displayName) !== -1 ));
+    column.meta.field !== (bucket.meta.field)));
 };

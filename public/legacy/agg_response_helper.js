@@ -1,6 +1,3 @@
-/**
- * TODO: Description
- */
 const { bucketReplaceProperty } = require('./bucket_replace_property_helper');
 
 const stringify = require('json-stable-stringify');
