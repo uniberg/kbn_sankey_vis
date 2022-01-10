@@ -6,7 +6,6 @@
  * Side Public License, v 1.
  */
 
-import { METRIC_TYPE } from '@kbn/analytics';
 import { PluginInitializerContext, CoreSetup } from 'kibana/public';
 
 import { SankeyVisPluginSetupDependencies, SankeyPluginStartDependencies } from '../plugin';
@@ -16,10 +15,9 @@ import { tableVisLegacyTypeDefinition } from './table_vis_legacy_type';
 
 export const registerLegacyVis = (
   core: CoreSetup<SankeyPluginStartDependencies>,
-  { expressions, visualizations, usageCollection }: SankeyVisPluginSetupDependencies,
+  { expressions, visualizations }: SankeyVisPluginSetupDependencies,
   context: PluginInitializerContext
 ) => {
-  usageCollection?.reportUiCounter('sankey', METRIC_TYPE.LOADED, 'legacyVisEnabled');
   expressions.registerFunction(createSankeyVisLegacyFn);
   expressions.registerRenderer(getSankeyVisLegacyRenderer(core, context));
   visualizations.createBaseVisualization(tableVisLegacyTypeDefinition);

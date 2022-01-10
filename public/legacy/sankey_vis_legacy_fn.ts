@@ -43,9 +43,13 @@ export const createSankeyVisLegacyFn = (): SankeyExpressionFunctionDefinition =>
       help: '',
     },
   },
-  fn(input, args) {
+  fn(input, args, { inspectorAdapters}) {
     const visConfig = args.visConfig && JSON.parse(args.visConfig);
     const convertedData = sankeyVisLegacyResponseHandler(input, visConfig.dimensions);
+
+    if (inspectorAdapters?.tables) {
+      inspectorAdapters.tables.logDatatable('default', input);
+    }
     return {
       type: 'render',
       as: SANKEY_VIS_NAME,

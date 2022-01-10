@@ -19,6 +19,7 @@ import { initSankeyVisLegacyModule } from './sankey_vis_legacy_module';
 import tableVisTemplate from './table_vis.html';
 import { SankeyPluginStartDependencies } from '../plugin';
 import { TableVisConfig, TableVisData } from '../types';
+import { getNotifications } from "../services";
 
 const innerAngularName = 'kibana/table_vis';
 
@@ -69,6 +70,10 @@ export function getTableVisualizationControllerClass(
       handlers: IInterpreterRenderHandlers
     ): Promise<void> {
       await this.initLocalAngular();
+      // The notification should be shown only when the user select one sub aggregation.
+      if (esResponse.tables[0].columns.length === 2) {
+        getNotifications().toasts.addWarning({ title: 'Warning', text: 'Minimum two sub aggs needed.'});
+      }
 
       return new Promise(async (resolve, reject) => {
         try {
@@ -77,7 +82,6 @@ export function getTableVisualizationControllerClass(
             this.$rootScope = $injector.get('$rootScope');
             this.$compile = $injector.get('$compile');
           }
-
           const updateScope = () => {
             if (!this.$scope) {
               return;
