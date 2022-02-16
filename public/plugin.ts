@@ -1,64 +1,46 @@
-/*
- * Licensed to Elasticsearch B.V. under one or more contributor
- * license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright
- * ownership. Elasticsearch B.V. licenses this file to you under
- * the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
-
-import { sankeyTypeDefinition } from './kbn_sankey_vis';
+import { PluginInitializerContext, CoreSetup, CoreStart, AsyncPlugin } from '../../../src/core/public';
+import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setNotifications, setQueryService, setSearchService, setFormatService } from './services';
+import { setFormatService, setNotifications } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
+import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
 
-
-/** @internal */
-export interface TablePluginSetupDependencies {
-  visualizations: VisualizationsSetup;
+interface ClientConfigType {
+  legacyVisEnabled: boolean;
 }
 
 /** @internal */
-export interface TablePluginStartDependencies {
+export interface SankeyVisPluginSetupDependencies {
+  visualizations: VisualizationsSetup;
+  expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
+}
+
+/** @internal */
+export interface SankeyPluginStartDependencies {
   data: DataPublicPluginStart;
   kibanaLegacy: KibanaLegacyStart;
+  visualizations: VisualizationsStart;
 }
 
 /** @internal */
-export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
-  initializerContext: PluginInitializerContext;
-  createBaseVisualization: any;
+export class SankeyVisPlugin implements AsyncPlugin<void, void, SankeyVisPluginSetupDependencies, SankeyPluginStartDependencies> {
+  initializerContext: PluginInitializerContext<ClientConfigType>;
 
   constructor(initializerContext: PluginInitializerContext) {
     this.initializerContext = initializerContext;
   }
 
   public async setup(
-    core: CoreSetup,
-    { visualizations }: TablePluginSetupDependencies
+    core: CoreSetup<SankeyPluginStartDependencies>,
+    { visualizations, expressions }: SankeyVisPluginSetupDependencies
   ) {
-    visualizations.createBaseVisualization(
-      sankeyTypeDefinition(core, this.initializerContext)
-    );
+    const { registerLegacyVis } = await import('./legacy/register_legacy_vis');
+    registerLegacyVis(core, { visualizations, expressions }, this.initializerContext);
   }
 
-  public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
+  public start(core: CoreStart, { data }: SankeyPluginStartDependencies) {
     setFormatService(data.fieldFormats);
     setNotifications(core.notifications);
-    setQueryService(data.query);
-    setSearchService(data.search);
   }
 }

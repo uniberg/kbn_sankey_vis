@@ -4,11 +4,15 @@
   "server": false,
   "ui": true,
   "requiredPlugins": [
+    "expressions",
     "visualizations",
     "data",
     "inspector",
     "kibanaLegacy",
-    "kibanaUtils",
     "visDefaultEditor"
+  ],
+  "requiredBundles": [
+    "kibanaUtils",
+    "share"
   ]
 }
