@@ -6,13 +6,15 @@
  * Side Public License, v 1.
  */
 
-import { IModule } from 'angular';
+import { I18nServiceType } from './provider';
 
-// @ts-ignore
-import { KbnSankeyVisController } from './sankey_vis_controller.js';
+export const i18nFilter: [string, typeof i18nFilterFn] = ['i18n', i18nFilterFn];
 
-/** @internal */
-export const initSankeyVisLegacyModule = (angularIns: IModule): void => {
-  angularIns
-    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController])
-};
+function i18nFilterFn(i18n: I18nServiceType) {
+  return (id: string, { defaultMessage = '', values = {} } = {}) => {
+    return i18n(id, {
+      values,
+      defaultMessage,
+    });
+  };
+}

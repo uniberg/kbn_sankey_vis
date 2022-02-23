@@ -1,3 +1,4 @@
+
 /*
  * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
  * or more contributor license agreements. Licensed under the Elastic License
@@ -6,65 +7,40 @@
  * Side Public License, v 1.
  */
 
-import {
-  EsaggsExpressionFunctionDefinition,
-  IndexPatternLoadExpressionFunctionDefinition,
-} from '../../../../src/plugins/data/public';
-import { buildExpression, buildExpressionFunction } from '../../../../src/plugins/expressions/public';
+import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '../../../../src/plugins/expressions/public';
 import { getVisSchemas, VisToExpressionAst } from '../../../../src/plugins/visualizations/public';
-import { SANKEY_VIS_NAME, TableVisParams } from '../types';
-import { SankeyExpressionFunctionDefinition } from './sankey_vis_legacy_fn';
+import { TableVisConfig, SANKEY_VIS_NAME } from '../types';
+import { SankeyOptions } from '../components/sankey_options';
 
-const buildTableVisConfig = (
-  schemas: ReturnType<typeof getVisSchemas>,
-  visParams: TableVisParams
-) => {
-  const metrics = schemas.metric;
-  const buckets = schemas.bucket || [];
-  const visConfig = {
-    dimensions: {
-      metrics,
-      buckets,
-      splitRow: schemas.split_row,
-      splitColumn: schemas.split_column,
-    },
-  };
+export type CommonVisDataParams = SankeyOptions;
+export type CommonVisConfig = TableVisConfig;
 
-  if (visParams.showPartialRows && !visParams.showMetricsAtAllLevels) {
-    // Handle case where user wants to see partial rows but not metrics at all levels.
-    // This requires calculating how many metrics will come back in the tabified response,
-    // and removing all metrics from the dimensions except the last set.
-    const metricsPerBucket = metrics.length / buckets.length;
-    visConfig.dimensions.metrics.splice(0, metricsPerBucket * buckets.length - metricsPerBucket);
-  }
-  return visConfig;
+type CommonVisToExpressionAst = (vis, params, name) => ExpressionAstExpression | Promise<ExpressionAstExpression>;
+
+export const toExpressionAstLegacy: VisToExpressionAst<CommonVisDataParams> = (vis,params) => {
+  return toExpressionAst(vis,params,SANKEY_VIS_NAME);
 };
 
-export const toExpressionAstLegacy: VisToExpressionAst<TableVisParams> = (vis, params) => {
-  const esaggs = buildExpressionFunction<EsaggsExpressionFunctionDefinition>('esaggs', {
-    index: buildExpression([
-      buildExpressionFunction<IndexPatternLoadExpressionFunctionDefinition>('indexPatternLoad', {
-        id: vis.data.indexPattern!.id!,
-      }),
-    ]),
-    metricsAtAllLevels: vis.isHierarchical(),
-    partialRows: vis.params.showPartialRows,
-    aggs: vis.data.aggs!.aggs.map((agg) => buildExpression(agg.toExpressionAst())),
-  });
+const toExpressionAst: CommonVisToExpressionAst = (vis, params, visName) => {
 
   const schemas = getVisSchemas(vis, params);
 
-  const visConfig = {
+  const visConfig: CommonVisConfig = {
     ...vis.params,
-    ...buildTableVisConfig(schemas, vis.params),
     title: vis.title,
   };
 
-  const table = buildExpressionFunction<SankeyExpressionFunctionDefinition>(SANKEY_VIS_NAME, {
+  const table = buildExpressionFunction<any>(visName, {
     visConfig: JSON.stringify(visConfig),
+    schemas: JSON.stringify(schemas),
+    index: vis.data.indexPattern!.id!,
+    uiState: JSON.stringify(vis.uiState),
+    aggConfigs: JSON.stringify(vis.data.aggs!.aggs),
+    partialRows: vis.params.showPartialRows,
+    metricsAtAllLevels: vis.isHierarchical()
   });
 
-  const ast = buildExpression([esaggs, table]);
+  const ast = buildExpression([table]);
 
   return ast.toAst();
 };

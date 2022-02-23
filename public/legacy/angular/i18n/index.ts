@@ -6,13 +6,11 @@
  * Side Public License, v 1.
  */
 
-import { IModule } from 'angular';
+export { I18nProvider } from './provider';
 
-// @ts-ignore
-import { KbnSankeyVisController } from './sankey_vis_controller.js';
+export { i18nFilter } from './filter';
+export { i18nDirective } from './directive';
 
-/** @internal */
-export const initSankeyVisLegacyModule = (angularIns: IModule): void => {
-  angularIns
-    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController])
-};
+// re-export types: https://github.com/babel/babel-loader/issues/603
+import { I18nServiceType as _I18nServiceType } from './provider';
+export type I18nServiceType = _I18nServiceType;

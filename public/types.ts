@@ -1,5 +1,5 @@
 import { ExpressionValueVisDimension } from '../../../src/plugins/visualizations/public';
-import { IFieldFormat } from '../../../src/plugins/field_formats/common';
+import { IFieldFormat } from '../../../src/plugins/data/public';
 import { DatatableColumn, DatatableRow } from '../../../src/plugins/expressions';
 import { SchemaConfig } from '../../../src/plugins/visualizations/public';
 import { AggTypes } from '../../../src/plugins/vis_type_table/common';
@@ -9,7 +9,8 @@ export interface TableVisData {
   tables: TableGroup[];
   direction?: 'row' | 'column';
 }
-export const SANKEY_VIS_NAME = 'sankey';
+export const SANKEY_VIS_NAME:VisName = 'sankey';
+export type VisName = string;
 export interface TableVisConfig extends TableVisParams {
   title: string;
   buckets?: ExpressionValueVisDimension[];
@@ -35,13 +36,6 @@ export interface TableVisUiState {
     direction: 'asc' | 'desc' | null;
   };
   colWidth: ColumnWidthData[];
-}
-
-export interface EnhancedTableVisUseUiStateProps {
-  columnsWidth: TableVisUiState['colWidth'];
-  sort: TableVisUiState['sort'];
-  setSort: (s?: TableVisUiState['sort']) => void;
-  setColumnsWidth: (column: ColumnWidthData) => void;
 }
 
 export interface SankeyVisConfig extends TableVisParams {
@@ -75,19 +69,14 @@ export interface FormattedColumns {
   [key: string]: FormattedColumn;
 }
 
-export interface EnhancedTableContext {
+export interface SankeyVisContext {
   columns: DatatableColumn[];
   rows: DatatableRow[];
   formattedColumns: FormattedColumns;
 }
 
 export interface TableGroup {
-  table: EnhancedTableContext;
+  table: SankeyVisContext;
   title: string;
 }
 
-export interface EnhancedTableVisData {
-  table?: EnhancedTableContext;
-  tables: TableGroup[];
-  direction?: 'row' | 'column';
-}
