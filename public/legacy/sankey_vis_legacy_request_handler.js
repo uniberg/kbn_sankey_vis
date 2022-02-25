@@ -125,8 +125,6 @@ export async function sankeyVisLegacyRequestHandler ({
       response.request = request;
     }
   }
-  console.log(request);
-  console.log(response);
   // return elasticsearch response
   return response;
 }

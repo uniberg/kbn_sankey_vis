@@ -221,11 +221,11 @@ export function KbnSankeyVisController($scope, $element, config) {
     }
     $scope.renderComplete();
   });
-  // observeResize($element, function () {
-  //   if (globalData) {
-  //     _updateDimensions();
-  //     resize=true;
-  //     _render(globalData);
-  //   }
-  // });
+  observeResize($element, function () {
+    if (globalData) {
+      _updateDimensions();
+      resize=true;
+      _render(globalData);
+    }
+  });
 }

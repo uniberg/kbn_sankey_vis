@@ -14,5 +14,5 @@ import { KbnSankeyVisController } from './sankey_vis_controller.js';
 /** @internal */
 export const initSankeyVisLegacyModule = (angularIns: IModule): void => {
   angularIns
-    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController])
+    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController]);
 };

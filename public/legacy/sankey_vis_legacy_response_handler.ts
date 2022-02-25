@@ -6,9 +6,9 @@
  * Side Public License, v 1.
  */
 
-const { aggregate } = require('./helpers/agg_response_helper');
 import { SchemaConfig } from '../../../../src/plugins/visualizations/public';
 import { Input } from './sankey_vis_legacy_fn';
+const { aggregate } = require('./helpers/agg_response_helper');
 
 interface Dimensions {
     buckets: SchemaConfig[];
@@ -40,7 +40,7 @@ export interface Table {
     rows: Input['rows'];
 }
 
-export function sankeyVisLegacyResponseHandler(table: Input, dimensions: Dimensions): SankeyContext {
+export function sankeyVisLegacyResponseHandler(table: Input): SankeyContext {
   const converted: SankeyContext = {
     slices: [],
     tables: [],
@@ -49,8 +49,8 @@ export function sankeyVisLegacyResponseHandler(table: Input, dimensions: Dimensi
     columns: table.columns,
     rows: table.rows,
   });
-  let missingValues = [];
-  let groupBucket = [];
+  const missingValues = [];
+  const groupBucket = [];
   table.columns.forEach((bucket) => {
 
     if (bucket.meta.sourceParams.params.missingBucket) {
@@ -63,8 +63,8 @@ export function sankeyVisLegacyResponseHandler(table: Input, dimensions: Dimensi
   });
   converted.slices = aggregate({
     rows: table.rows,
-    missingValues: missingValues,
-    groupBucket:groupBucket
+    missingValues,
+    groupBucket
   });
   return converted;
 }

@@ -1,7 +1,7 @@
 import { CoreSetup, PluginInitializerContext } from 'kibana/public';
-import { ExpressionRenderDefinition } from '../../../src/plugins/expressions';
+import { ExpressionRenderDefinition } from '../../../../src/plugins/expressions';
 import { SankeyPluginStartDependencies } from '../plugin';
-import { TableVisRenderValue } from '../table_vis_fn';
+import { SankeyVisRenderValue } from './sankey_vis_legacy_fn';
 import { SANKEY_VIS_NAME, VisName } from '../types';
 
 const tableVisRegistry = new Map<HTMLElement, any>();
@@ -9,7 +9,7 @@ const tableVisRegistry = new Map<HTMLElement, any>();
 export const getSankeyVisLegacyRenderer: (
   core: CoreSetup<SankeyPluginStartDependencies>,
   context: PluginInitializerContext
-) => ExpressionRenderDefinition<TableVisRenderValue> = (core, context) => ({
+) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core, context) => ({
   ...getVisLegacyRender(core, context, SANKEY_VIS_NAME)
 });
 
@@ -17,7 +17,7 @@ const getVisLegacyRender: (
     core: CoreSetup<SankeyPluginStartDependencies>,
     context: PluginInitializerContext,
     visName: VisName
-) => ExpressionRenderDefinition<TableVisRenderValue> = (core, context, visName) => ({
+) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core, context, visName) => ({
   name: visName,
   reuseDomNode: true,
   render: async (domNode, config, handlers) => {
@@ -26,7 +26,7 @@ const getVisLegacyRender: (
     if (!registeredController) {
       const { getTableVisualizationControllerClass } = await import('./vis_controller');
 
-      const Controller = getTableVisualizationControllerClass(core, context);
+      const Controller = getTableVisualizationControllerClass(core);
       registeredController = new Controller(domNode, config.visType);
       tableVisRegistry.set(domNode, registeredController);
 

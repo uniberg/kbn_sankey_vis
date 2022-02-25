@@ -100,41 +100,41 @@ export const expressionFunction = (visName: VisName, responseHandler: ResponseHa
       : undefined;
     const visType = getVisualization().get(visName);
     input = await sankeyVisLegacyRequestHandler({
-        partialRows: args.partialRows,
-        metricsAtAllLevels: args.metricsAtAllLevels,
-        visParams: visConfigParams,
-        timeRange: get(input, 'timeRange', null),
-        query: get(input, 'query', null),
-        filters: get(input, 'filters', null),
-        inspectorAdapters,
-        queryFilter: getFilterManager(),
-        aggs,
-        forceFetch: true,
-        searchSessionId: getSearchSessionId(),
+      partialRows: args.partialRows,
+      metricsAtAllLevels: args.metricsAtAllLevels,
+      visParams: visConfigParams,
+      timeRange: get(input, 'timeRange', null),
+      query: get(input, 'query', null),
+      filters: get(input, 'filters', null),
+      inspectorAdapters,
+      queryFilter: getFilterManager(),
+      aggs,
+      forceFetch: true,
+      searchSessionId: getSearchSessionId(),
     });
 
 
     if (input.columns) {
-        // assign schemas to aggConfigs
-        input.columns.forEach((column: any) => {
-            if (column.aggConfig) {
-                column.aggConfig.aggConfigs.schemas = visType.schemas.all;
-            }
-        });
+      // assign schemas to aggConfigs
+      input.columns.forEach((column: any) => {
+          if (column.aggConfig) {
+              column.aggConfig.aggConfigs.schemas = visType.schemas.all;
+          }
+      });
 
-        Object.keys(schemas).forEach((key) => {
-            schemas[key].forEach((i: any) => {
-            if (input.columns[i] && input.columns[i].aggConfig) {
-                input.columns[i].aggConfig.schema = key;
-            }
-            });
-        });
+      Object.keys(schemas).forEach((key) => {
+          schemas[key].forEach((i: any) => {
+          if (input.columns[i] && input.columns[i].aggConfig) {
+              input.columns[i].aggConfig.schema = key;
+          }
+          });
+      });
 
-        // This only works if "inputs.columns" exist, so it makes
-        // sense to have it here
-        if (inspectorAdapters?.tables) {
-          inspectorAdapters.tables.logDatatable('default', input);
-        }
+      // This only works if "inputs.columns" exist, so it makes
+      // sense to have it here
+      if (inspectorAdapters?.tables) {
+        inspectorAdapters.tables.logDatatable('default', input);
+      }
     }
 
     const response = await responseHandler(input);
