@@ -6,13 +6,8 @@
  * Side Public License, v 1.
  */
 
-import { IModule } from 'angular';
+import { IServiceProvider } from 'angular';
 
-// @ts-ignore
-import { KbnSankeyVisController } from './sankey_vis_controller.js';
+export type IPrivate = <T>(provider: (...injectable: any[]) => T) => T;
 
-/** @internal */
-export const initSankeyVisLegacyModule = (angularIns: IModule): void => {
-  angularIns
-    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController]);
-};
+export function PrivateProvider(): IServiceProvider;

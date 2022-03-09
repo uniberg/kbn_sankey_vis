@@ -1,14 +1,10 @@
-import { PluginInitializerContext, CoreSetup, CoreStart, AsyncPlugin } from '../../../src/core/public';
+import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setNotifications } from './services';
+import { setFilterManager, setFormatService, setIndexPatterns, setKibanaLegacy, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
-
-interface ClientConfigType {
-  legacyVisEnabled: boolean;
-}
 
 /** @internal */
 export interface SankeyVisPluginSetupDependencies {
@@ -24,8 +20,8 @@ export interface SankeyPluginStartDependencies {
 }
 
 /** @internal */
-export class SankeyVisPlugin implements AsyncPlugin<void, void, SankeyVisPluginSetupDependencies, SankeyPluginStartDependencies> {
-  initializerContext: PluginInitializerContext<ClientConfigType>;
+export class SankeyVisPlugin implements Plugin<void, void> {
+  initializerContext: PluginInitializerContext;
 
   constructor(initializerContext: PluginInitializerContext) {
     this.initializerContext = initializerContext;
@@ -39,8 +35,14 @@ export class SankeyVisPlugin implements AsyncPlugin<void, void, SankeyVisPluginS
     registerLegacyVis(core, { visualizations, expressions }, this.initializerContext);
   }
 
-  public start(core: CoreStart, { data }: SankeyPluginStartDependencies) {
+  public start(core: CoreStart, { data, visualizations, kibanaLegacy  }: SankeyPluginStartDependencies) {
     setFormatService(data.fieldFormats);
+    setKibanaLegacy(kibanaLegacy);
     setNotifications(core.notifications);
+    setQueryService(data.query);
+    setSearchService(data.search);
+    setIndexPatterns(data.indexPatterns);
+    setFilterManager(data.query.filterManager);
+    setVisualization(visualizations);
   }
 }

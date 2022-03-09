@@ -2,17 +2,21 @@
   "id": "kbnSankeyVis",
   "version": "kibana",
   "server": false,
+  "owner": {
+      "name": "Chenryn <rao.chenlin@gmail.com>",
+      "maintainer": "Ch-bas <bassem.chagra@uniberg.com>"
+    },
   "ui": true,
   "requiredPlugins": [
-    "expressions",
     "visualizations",
+    "expressions",
     "data",
     "inspector",
     "kibanaLegacy",
-    "visDefaultEditor"
-  ],
-  "requiredBundles": [
     "kibanaUtils",
-    "share"
+    "kibanaReact",
+    "share",
+    "charts",
+    "visDefaultEditor"
   ]
 }

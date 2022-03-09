@@ -6,13 +6,8 @@
  * Side Public License, v 1.
  */
 
-import { IModule } from 'angular';
+import { Injectable, IDirectiveFactory, IScope, IAttributes, IController, JQLite } from 'angular';
 
-// @ts-ignore
-import { KbnSankeyVisController } from './sankey_vis_controller.js';
-
-/** @internal */
-export const initSankeyVisLegacyModule = (angularIns: IModule): void => {
-  angularIns
-    .controller('KbnSankeyVisController', ['$scope','$element','tableConfig',KbnSankeyVisController]);
-};
+export const KbnAccessibleClickProvider: Injectable<
+  IDirectiveFactory<IScope, JQLite, IAttributes, IController>
+>;

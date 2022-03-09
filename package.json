@@ -20,8 +20,10 @@
     "plugin-helpers": "node ../../scripts/plugin_helpers"
   },
   "dependencies": {
-    "d3-plugins-sankey": "https://github.com/uniberg/d3-plugins-sankey.git",
-    "json-stable-stringify": "^1.0.1"
+    "angular": "^1.8.0",
+    "angular-recursion": "^1.0.5",
+    "angular-sanitize": "^1.8.2",
+    "d3-plugins-sankey": "https://github.com/uniberg/d3-plugins-sankey.git"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "5.15.2",
