@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { CoreSetup } from '../../../../src/core/public';
 import { VisParams } from '../../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy, getVisualization } from '../services';
+import { getVisualization } from '../services';
 import { initSankeyVisLegacyModule } from './sankey_vis_legacy_module';
 // @ts-ignore
 import tableVisTemplate from './table_vis.html';
@@ -52,7 +52,6 @@ export function getTableVisualizationControllerClass(
         initAngularBootstrap();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart);
         initSankeyVisLegacyModule(this.tableVisModule);
-        getKibanaLegacy().loadFontAwesome();
       }
     }
 

@@ -12,7 +12,6 @@
     "expressions",
     "data",
     "inspector",
-    "kibanaLegacy",
     "kibanaUtils",
     "kibanaReact",
     "share",

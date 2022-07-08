@@ -2,7 +2,7 @@ import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../..
 import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFilterManager, setFormatService, setIndexPatterns, setKibanaLegacy, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
+import { setFilterManager, setFormatService, setIndexPatterns, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
 
@@ -15,7 +15,6 @@ export interface SankeyVisPluginSetupDependencies {
 /** @internal */
 export interface SankeyPluginStartDependencies {
   data: DataPublicPluginStart;
-  kibanaLegacy: KibanaLegacyStart;
   visualizations: VisualizationsStart;
 }
 
@@ -35,9 +34,8 @@ export class SankeyVisPlugin implements Plugin<void, void> {
     registerLegacyVis(core, { visualizations, expressions }, this.initializerContext);
   }
 
-  public start(core: CoreStart, { data, visualizations, kibanaLegacy  }: SankeyPluginStartDependencies) {
+  public start(core: CoreStart, { data, visualizations  }: SankeyPluginStartDependencies) {
     setFormatService(data.fieldFormats);
-    setKibanaLegacy(kibanaLegacy);
     setNotifications(core.notifications);
     setQueryService(data.query);
     setSearchService(data.search);
