@@ -1,6 +1,8 @@
 # Kibana Sankey Diagram Plugin
 
-This is a sankey diagram visType plugin for Kibana 7.x.
+This is a sankey diagram visType plugin for Kibana.
+
+The plugin is compatible with Kibana: 5.3 && 6.x && 7.x && 8.3.x .
 
 This plugin was developped from <https://github.com/elastic/kibana/pull/4832>.
 
