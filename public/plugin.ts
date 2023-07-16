@@ -1,46 +1,47 @@
-import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import type { CoreSetup, CoreStart, Plugin } from '@kbn/core/public';
+import type { Plugin as ExpressionsPublicPlugin } from '@kbn/expressions-plugin/public';
+import type { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizations-plugin/public';
+import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
+import { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
+import { DataPublicPluginStart } from '@kbn/data-plugin/public';
 
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFilterManager, setFormatService, setIndexPatterns, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
-import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
-import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+import { setFormatService, setDataViewsStart, setNotifications, setSearchService, setVisualization } from './services';
+import { createSankeyVisLegacyFn } from "./legacy/sankey_vis_legacy_fn";
+import { getSankeyVisLegacyRenderer } from "./legacy/sankey_vis_legacy_renderer";
+import { tableVisLegacyTypeDefinition } from "./legacy/table_vis_legacy_type";
+
 
 /** @internal */
 export interface SankeyVisPluginSetupDependencies {
-  visualizations: VisualizationsSetup;
   expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
+  visualizations: VisualizationsSetup;
 }
 
 /** @internal */
 export interface SankeyPluginStartDependencies {
+  fieldFormats: FieldFormatsStart;
+  dataViews: DataViewsPublicPluginStart;
   data: DataPublicPluginStart;
   visualizations: VisualizationsStart;
 }
 
 /** @internal */
-export class SankeyVisPlugin implements Plugin<void, void> {
-  initializerContext: PluginInitializerContext;
-
-  constructor(initializerContext: PluginInitializerContext) {
-    this.initializerContext = initializerContext;
-  }
+export class SankeyVisPlugin implements Plugin<void, void, SankeyVisPluginSetupDependencies, SankeyPluginStartDependencies> {
 
   public async setup(
     core: CoreSetup<SankeyPluginStartDependencies>,
-    { visualizations, expressions }: SankeyVisPluginSetupDependencies
+    { expressions, visualizations }: SankeyVisPluginSetupDependencies
   ) {
-    const { registerLegacyVis } = await import('./legacy/register_legacy_vis');
-    registerLegacyVis(core, { visualizations, expressions }, this.initializerContext);
+    expressions.registerFunction(createSankeyVisLegacyFn);
+    expressions.registerRenderer(getSankeyVisLegacyRenderer(core));
+    visualizations.createBaseVisualization(tableVisLegacyTypeDefinition(core));
   }
 
-  public start(core: CoreStart, { data, visualizations  }: SankeyPluginStartDependencies) {
-    setFormatService(data.fieldFormats);
+  public start(core: CoreStart, { data, dataViews, fieldFormats, visualizations  }: SankeyPluginStartDependencies) {
+    setFormatService(fieldFormats);
     setNotifications(core.notifications);
-    setQueryService(data.query);
     setSearchService(data.search);
-    setIndexPatterns(data.indexPatterns);
-    setFilterManager(data.query.filterManager);
+    setDataViewsStart(dataViews);
     setVisualization(visualizations);
   }
 }

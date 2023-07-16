@@ -1,12 +1,12 @@
-import { assign } from 'lodash';
+import _ from 'lodash';
 import d3 from 'd3';
 import 'd3-plugins-sankey';
 import { filterNodesAndLinks } from '../lib/filter';
 let observeResize = require('../lib/observe_resize');
 
-export function KbnSankeyVisController($scope, $element, config) {
+function KbnSankeyVisController($scope, $element, config) {
   const uiStateSort = $scope.uiState ? $scope.uiState.get('vis.params.sort') : {};
-  assign($scope.visParams.sort, uiStateSort);
+  _.assign($scope.visParams.sort, uiStateSort);
   let globalData = null;
   $scope.sort = $scope.visParams.sort;
   $scope.$watchCollection('sort', function (newSort) {
@@ -228,4 +228,7 @@ export function KbnSankeyVisController($scope, $element, config) {
       _render(globalData);
     }
   });
+
 }
+
+export { KbnSankeyVisController };

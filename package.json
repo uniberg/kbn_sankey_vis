@@ -21,7 +21,7 @@
     "test": "nyc --all mocha",
     "build": "node ../../scripts/plugin_helpers.js build",
     "compile-and-build": "node ../../scripts/plugin_helpers.js build",
-    "compile": "rm -rf ./target && node ../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/kbnSankeyVis/target . && rm -rf build/*"
+    "compile": "rm -rf ./target && node ../../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/kbnSankeyVis/target . && rm -rf build/*"
   },
   "dependencies": {
     "angular": "^1.8.0",

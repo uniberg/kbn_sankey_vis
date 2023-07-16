@@ -1,9 +1,9 @@
 import { i18n } from '@kbn/i18n';
-import { AggGroupNames } from '../../../../src/plugins/data/public';
+import { AggGroupNames } from '@kbn/data-plugin/public';
 import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
 import tableVisTemplate from '../legacy/table_vis.html';
 import { SankeyOptions } from '../components/sankey_vis_options_lazy';
-import { VIS_EVENT_TO_TRIGGER } from '../../../../src/plugins/visualizations/public';
+import { VIS_EVENT_TO_TRIGGER } from '@kbn/visualizations-plugin/public';
 
 import { SANKEY_VIS_NAME } from '../types';
 import { toExpressionAstLegacy } from './to_ast_legacy';

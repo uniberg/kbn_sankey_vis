@@ -12,7 +12,7 @@
 import angular from 'angular';
 import 'angular-sanitize';
 import 'angular-recursion';
-import { CoreStart, IUiSettingsClient } from 'kibana/public';
+import { CoreStart, IUiSettingsClient } from '@kbn/core/public';
 import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
 import { watchMultiDecorator } from './angular/watch_multi';
 import { KbnAccessibleClickProvider, PrivateProvider } from './angular/utils';

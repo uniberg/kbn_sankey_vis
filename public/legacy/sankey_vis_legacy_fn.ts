@@ -8,7 +8,7 @@
 import { get } from 'lodash';
 import { i18n } from '@kbn/i18n';
 import { ExpressionFunctionDefinition, Render, Datatable } from '../../../../src/plugins/expressions/public';
-import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from '../services';
+import { getDataViewsStart, getSearchService, getVisualization } from '../services';
 import { sankeyVisLegacyResponseHandler } from './sankey_vis_legacy_response_handler';
 import { sankeyVisLegacyRequestHandler } from './sankey_vis_legacy_request_handler';
 import { SANKEY_VIS_NAME, VisName } from '../types';
@@ -22,6 +22,7 @@ interface Arguments {
   visConfig?: string;
   uiState?: string;
   aggConfigs?: string;
+  timeFields?: string[];
 }
 
 export interface SankeyVisRenderValue {
@@ -89,10 +90,10 @@ export const expressionFunction = (visName: VisName, responseHandler: ResponseHa
       help: 'Aggregation configurations',
     },
   },
-  async fn(input, args, { inspectorAdapters, getSearchSessionId }) {
+  async fn(input, args, { inspectorAdapters, abortSignal, getSearchSessionId, getExecutionContext }) {
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
     const schemas = args.schemas ? JSON.parse(args.schemas) : {};
-    const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
+    const indexPattern = args.index ? await getDataViewsStart().get(args.index) : null;
 
     const aggConfigsState = args.aggConfigs ? JSON.parse(args.aggConfigs) : [];
     const aggs = indexPattern
@@ -100,17 +101,18 @@ export const expressionFunction = (visName: VisName, responseHandler: ResponseHa
       : undefined;
     const visType = getVisualization().get(visName);
     input = await sankeyVisLegacyRequestHandler({
-      partialRows: args.partialRows,
-      metricsAtAllLevels: args.metricsAtAllLevels,
-      visParams: visConfigParams,
-      timeRange: get(input, 'timeRange', null),
-      query: get(input, 'query', null),
-      filters: get(input, 'filters', null),
-      inspectorAdapters,
-      queryFilter: getFilterManager(),
+      abortSignal,
       aggs,
-      forceFetch: true,
+      filters: get(input, 'filters', null),
+      indexPattern,
+      inspectorAdapters,
+      partialRows: args.partialRows,
+      query: get(input, 'query', null),
       searchSessionId: getSearchSessionId(),
+      timeFields: args.timeFields,
+      timeRange: get(input, 'timeRange', null),
+      executionContext: getExecutionContext(),
+      visParams: visConfigParams,
     });
 
 
