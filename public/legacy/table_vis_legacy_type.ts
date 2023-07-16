@@ -9,14 +9,14 @@
 import { i18n } from '@kbn/i18n';
 import random from '@fortawesome/fontawesome-free/svgs/solid/random.svg';
 import { AggGroupNames } from '../../../../src/plugins/data/public';
-import { VisTypeDefinition } from '../../../../src/plugins/visualizations/public';
 
 import { SankeyOptions } from '../components/sankey_vis_options_lazy';
-import { VIS_EVENT_TO_TRIGGER } from '../../../../src/plugins/visualizations/public';
-import { TableVisParams } from '../types';
+import { VIS_EVENT_TO_TRIGGER } from '@kbn/visualizations-plugin/public';
 import { toExpressionAstLegacy } from './to_ast_legacy';
 
-export const tableVisLegacyTypeDefinition: VisTypeDefinition<TableVisParams> = {
+export function tableVisLegacyTypeDefinition(core) {
+return {
+  requiresSearch: true,
   name: 'sankey',
   title: i18n.translate('visTypeTable.tableVisTitle', {
     defaultMessage: 'Sankey Diagram',
@@ -72,5 +72,5 @@ export const tableVisLegacyTypeDefinition: VisTypeDefinition<TableVisParams> = {
   },
   toExpressionAst: toExpressionAstLegacy,
   hierarchicalData: (vis) => vis.params.showPartialRows || vis.params.showMetricsAtAllLevels,
-  requiresSearch: true,
 };
+}

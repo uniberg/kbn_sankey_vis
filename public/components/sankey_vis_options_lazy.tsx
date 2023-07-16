@@ -1,6 +1,13 @@
 import React from 'react';
-import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
-import { AggTypes } from '../../../../src/plugins/vis_type_table/common';
+import { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
+
+export enum AggTypes {
+  SUM = 'sum',
+  AVG = 'avg',
+  MIN = 'min',
+  MAX = 'max',
+  COUNT = 'count',
+}
 interface TableVisParams {
   perPage: number | '';
   showPartialRows: boolean;

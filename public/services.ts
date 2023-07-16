@@ -1,30 +1,21 @@
-import { createGetterSetter } from '../../../src/plugins/kibana_utils/public';
-import { NotificationsStart } from '../../../src/core/public';
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import { createGetterSetter } from '@kbn/kibana-utils-plugin/public';
+import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
+import type { NotificationsStart } from '@kbn/core/public';
+import type { DataPublicPluginStart } from '@kbn/data-plugin/public';
+import type { VisualizationsStart } from '@kbn/visualizations-plugin/public';
+import type { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
 
-export const [getNotifications, setNotifications] = createGetterSetter<
-  NotificationsStart
->('Notifications');
+export const [getFormatService, setFormatService] =
+  createGetterSetter<FieldFormatsStart>('FieldFormats');
 
-export const [getQueryService, setQueryService] = createGetterSetter<
-  DataPublicPluginStart['query']
->('Query');
+export const [getNotifications, setNotifications] =
+  createGetterSetter<NotificationsStart>('Notifications');
 
-export const [getSearchService, setSearchService] = createGetterSetter<
-  DataPublicPluginStart['search']
->('Search');
+export const [getDataViewsStart, setDataViewsStart] =
+  createGetterSetter<DataViewsPublicPluginStart>('dataViews');
 
-export const [getFormatService, setFormatService] = createGetterSetter<
-  DataPublicPluginStart['fieldFormats']
-  >('table data.fieldFormats');
+export const [getSearchService, setSearchService] =
+  createGetterSetter<DataPublicPluginStart['search']>('Search');
 
-export const [getVisualization, setVisualization] = createGetterSetter<VisualizationsStart>(
-    'Visualization'
-);
-export const [getFilterManager, setFilterManager] = createGetterSetter<FilterManager>(
-    'FilterManager'
-);
-export const [getIndexPatterns, setIndexPatterns] = createGetterSetter<IndexPatternsContract>(
-    'IndexPatterns'
-);
+export const [getVisualization, setVisualization] =
+  createGetterSetter<VisualizationsStart>('Visualization');

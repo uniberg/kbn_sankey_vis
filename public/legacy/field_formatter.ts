@@ -1,5 +1,5 @@
 import { getFormatService } from '../services';
-import { IAggConfig, IFieldFormat, FieldFormatsContentType } from '../../../src/plugins/data/public';
+import { IAggConfig, IFieldFormat, FieldFormatsContentType } from '@kbn/field-formats-plugin/common';
 
 /**
  * Returns the fieldFormatter function associated to aggConfig, for the requested contentType (html or text).

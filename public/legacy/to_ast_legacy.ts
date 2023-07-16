@@ -1,18 +1,10 @@
-
-/*
- * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
- * or more contributor license agreements. Licensed under the Elastic License
- * 2.0 and the Server Side Public License, v 1; you may not use this file except
- * in compliance with, at your election, the Elastic License 2.0 or the Server
- * Side Public License, v 1.
- */
-
-import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '../../../../src/plugins/expressions/public';
-import { getVisSchemas, VisToExpressionAst } from '../../../../src/plugins/visualizations/public';
+import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '@kbn/expressions-plugin/public';
+import { getVisSchemas, VisToExpressionAst } from '@kbn/visualizations-plugin/public';
 import { TableVisConfig, SANKEY_VIS_NAME } from '../types';
-import { SankeyOptions } from '../components/sankey_options';
+import { SankeyVisParams } from '../components/sankey_options';
+import { CommonExpressionFunctionDefinition } from './kibana_cloned_code/visualization_fn';
 
-export type CommonVisDataParams = SankeyOptions;
+export type CommonVisDataParams = SankeyVisParams;
 export type CommonVisConfig = TableVisConfig;
 
 type CommonVisToExpressionAst = (vis, params, name) => ExpressionAstExpression | Promise<ExpressionAstExpression>;
@@ -30,7 +22,7 @@ const toExpressionAst: CommonVisToExpressionAst = (vis, params, visName) => {
     title: vis.title,
   };
 
-  const table = buildExpressionFunction<any>(visName, {
+  const table = buildExpressionFunction<CommonExpressionFunctionDefinition>(visName, {
     visConfig: JSON.stringify(visConfig),
     schemas: JSON.stringify(schemas),
     index: vis.data.indexPattern!.id!,
