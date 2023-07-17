@@ -10,7 +10,10 @@
   "requiredPlugins": [
     "visualizations",
     "expressions",
+    "bfetch",
     "data",
+    "fieldFormats",
+    "dataViews",
     "inspector",
     "kibanaUtils",
     "kibanaReact",

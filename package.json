@@ -1,6 +1,6 @@
 {
   "name": "kbn-sankey-vis",
-  "version": "8.3.1",
+  "version": "8.8.2",
   "kibana": {
     "version": "kibana"
   },
@@ -14,10 +14,14 @@
   "repository": "https://github.com/uniberg/kbn_sankey_vis.git",
   "main": "index.js",
   "scripts": {
-    "start": "cd ../.. && node scripts/kibana --dev --oss",
+    "preinstall": "node ../../preinstall_check",
+    "start": "cd ../.. && node scripts/kibana --dev",
+    "start-xpack": "cd .. && node scripts/kibana --dev",
+    "debug": "node --nolazy --inspect ../../scripts/kibana --dev",
     "test": "nyc --all mocha",
-    "build": "yarn plugin-helpers build",
-    "plugin-helpers": "node ../../scripts/plugin_helpers"
+    "build": "node ../../scripts/plugin_helpers.js build",
+    "compile-and-build": "node ../../scripts/plugin_helpers.js build",
+    "compile": "rm -rf ./target && node ../../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/kbnSankeyVis/target . && rm -rf build/*"
   },
   "dependencies": {
     "angular": "^1.8.0",
@@ -26,6 +30,7 @@
     "d3-plugins-sankey": "https://github.com/uniberg/d3-plugins-sankey.git"
   },
   "devDependencies": {
+    "@types/angular": "^1.8.0",
     "@fortawesome/fontawesome-free": "5.15.2",
     "mocha": "~5.0.4",
     "nyc": "^13.3.0"

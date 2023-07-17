@@ -1,15 +1,17 @@
+/* global JQuery */
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup } from '../../../../src/core/public';
-import { VisParams } from '../../../../src/plugins/visualizations/public';
+import { CoreSetup } from '@kbn/core/public';
+import { VisParams } from '@kbn/visualizations-plugin/public';
+import { BaseVisType } from '@kbn/visualizations-plugin/public';
+import { IInterpreterRenderHandlers } from '@kbn/expressions-plugin/public';
+
 import { getAngularModule } from './get_inner_angular';
 import { getVisualization } from '../services';
 import { initSankeyVisLegacyModule } from './sankey_vis_legacy_module';
 // @ts-ignore
 import tableVisTemplate from './table_vis.html';
-import { BaseVisType } from '../../../../src/plugins/visualizations/public/vis_types';
-import { IInterpreterRenderHandlers } from '../../../../src/plugins/expressions';
 
 const innerAngularName = 'kibana/table_vis';
 
@@ -25,7 +27,7 @@ export function getTableVisualizationControllerClass(
     $compile: ICompileService | undefined;
     params: object;
     handlers: any;
-    vis: BaseVisType;
+    vis: BaseVisType | undefined;
 
     constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);
@@ -61,10 +63,6 @@ export function getTableVisualizationControllerClass(
       handlers: IInterpreterRenderHandlers
       ): Promise<void> {
       await this.initLocalAngular();
-      // The notification should be shown only when the user select one sub aggregation.
-      // if (esResponse.tables[0].columns.length === 2) {
-      //   getNotifications().toasts.addWarning({ title: 'Warning', text: 'Minimum two sub aggs needed.'});
-      // }
 
       return new Promise((resolve, reject) => {
         try {

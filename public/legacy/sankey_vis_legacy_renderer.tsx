@@ -1,5 +1,5 @@
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
-import { ExpressionRenderDefinition } from '../../../../src/plugins/expressions';
+import { CoreSetup } from '@kbn/core/public';
+import { ExpressionRenderDefinition } from '@kbn/expressions-plugin/public';
 import { SankeyPluginStartDependencies } from '../plugin';
 import { SankeyVisRenderValue } from './sankey_vis_legacy_fn';
 import { SANKEY_VIS_NAME, VisName } from '../types';
@@ -7,17 +7,15 @@ import { SANKEY_VIS_NAME, VisName } from '../types';
 const tableVisRegistry = new Map<HTMLElement, any>();
 
 export const getSankeyVisLegacyRenderer: (
-  core: CoreSetup<SankeyPluginStartDependencies>,
-  context: PluginInitializerContext
-) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core, context) => ({
-  ...getVisLegacyRender(core, context, SANKEY_VIS_NAME)
+  core: CoreSetup<SankeyPluginStartDependencies>
+) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core) => ({
+  ...getVisLegacyRender(core, SANKEY_VIS_NAME)
 });
 
 const getVisLegacyRender: (
     core: CoreSetup<SankeyPluginStartDependencies>,
-    context: PluginInitializerContext,
     visName: VisName
-) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core, context, visName) => ({
+) => ExpressionRenderDefinition<SankeyVisRenderValue> = (core, visName) => ({
   name: visName,
   reuseDomNode: true,
   render: async (domNode, config, handlers) => {
