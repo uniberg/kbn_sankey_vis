@@ -2,13 +2,13 @@
 
 This is a sankey diagram visType plugin for Kibana.
 
-The plugin is compatible with Kibana: 5.3 && 6.x && 7.x && 8.8.x .
+The plugin is compatible with Kibana: 5.3 && 6.x && 7.x && 8.10.x .
 
-This plugin was developped from <https://github.com/elastic/kibana/pull/4832>.
+This plugin was developed from <https://github.com/elastic/kibana/pull/4832>.
 
 Here is an example:
 
-![Sankey](sankey_7_10_Screenshot1.png)
+![Sankey](sankey_8.png)
 
 # Install
 
@@ -16,12 +16,15 @@ Here is an example:
 git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
 yarn install
+yarn compile
 yarn start
 ```
 # Use
+In development mode:
 * Navigate to Kibana (http://localhost:5601).
-* Go to "Visualize" app.
+* Go to "Visualize Library" app.
 * Click "Create visualization".
+* Click "Aggregation Based".
 * Choose "Sankey Diagram"
 # Uninstall
 
@@ -38,5 +41,5 @@ git clone https://github.com/uniberg/kbn_sankey_vis.git sankey_vis
 cd sankey_vis
 [optional] git checkout -branch
 yarn install
-yarn build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
+yarn compile-and-build
 ```
