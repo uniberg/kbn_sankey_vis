@@ -81,7 +81,15 @@ function KbnSankeyVisController($scope, $element, config) {
 
     link.append('title')
     .text(function (d) {
-      return d.source.name + ' → ' + d.target.name + '\n' + d.value;
+      return d.source.name + ' → ' + d.target.name + '\n' + d.value + ' ('+(Math.round(d.value/d.source.value * 1000) / 10).toFixed(1)+'%)';
+    });
+
+    // OQMod, gets total of source nodes
+    var total = d3.sum(energy.nodes, function(d) {
+      if (d.targetLinks.length>0) 
+         return 0; //node is not source, exclude it from the total
+      else 
+         return d.value; //node is a source: add its value to the sum
     });
 
     let node = svg.append('g').selectAll('.node')
@@ -98,7 +106,22 @@ function KbnSankeyVisController($scope, $element, config) {
     .on('dragstart', function () {
       this.parentNode.appendChild(this);
     })
-    .on('drag', dragmove));
+    .on('drag', dragmove))
+    // OQMod: Highlight the set of links coming from a node
+    .on("mouseover", function(d) {
+      link
+        .transition()
+        .duration(300)
+        .style("stroke-opacity", function(l) {
+          return l.source === d || l.target === d ? 0.5 : 0.2;
+        });
+    })
+    .on("mouseleave", function(d) {
+      link
+        .transition()
+        .duration(300)
+        .style("stroke-opacity", 0.2);
+    });
 
     node.append('rect')
     .attr('height', function (d) {
@@ -109,12 +132,13 @@ function KbnSankeyVisController($scope, $element, config) {
       d.color = color(d.name);
       return d.color;
     })
-    .style('stroke', function (d) {
+    .attr("rx", 2) // OQMod: Rounded all corners
+    /*.style('stroke', function (d) {
       return getConfig('theme:darkMode') ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
-    })
+    })*/ // OQMod: Hide stroke border
     .append('title')
     .text(function (d) {
-      return d.name + '\n' + d.value;
+      return d.name + '\n' + d.value + ' ('+(Math.round(d.value/total * 1000) / 10).toFixed(1)+'%)';
     });
 
     node.append('text')

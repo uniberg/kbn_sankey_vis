@@ -1,6 +1,6 @@
 {
   "name": "kbn-sankey-vis",
-  "version": "8.8.9",
+  "version": "8.12.1",
   "kibana": {
     "version": "kibana"
   },
@@ -21,7 +21,9 @@
     "test": "nyc --all mocha",
     "build": "node ../../scripts/plugin_helpers.js build",
     "compile-and-build": "node ../../scripts/plugin_helpers.js build",
-    "compile": "rm -rf ./target && export NODE_OPTIONS=--openssl-legacy-provider && node ../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/kbnSankeyVis/target . && rm -rf build/*"
+    "compile": "rm -rf ./target && export NODE_OPTIONS=--openssl-legacy-provider && node ../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/kbnSankeyVis/target . && rm -rf build/*",
+    "plugin-helpers": "node ../../scripts/plugin_helpers",
+    "dev": "yarn plugin-helpers dev"
   },
   "dependencies": {
     "angular": "^1.8.0",
