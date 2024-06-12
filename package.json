@@ -1,6 +1,6 @@
 {
   "name": "kbn-sankey-vis",
-  "version": "8.12.1",
+  "version": "8.14.0",
   "kibana": {
     "version": "kibana"
   },

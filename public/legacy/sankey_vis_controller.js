@@ -19,6 +19,7 @@ function KbnSankeyVisController($scope, $element, config) {
    * - one of the view options changes (vis.params)
    */
   const getConfig = (...args) => config.get(...args);
+  let darkMode = getConfig('theme:darkMode');
   const lightTextColor = "#CBCFCB";
   const darkTextColor = "#000000";
   let svgRoot = $element[0];
@@ -147,7 +148,7 @@ function KbnSankeyVisController($scope, $element, config) {
       return d.dy / 2;
     })
     .attr('dy', '.35em')
-    .style('fill', getConfig('theme:darkMode') ? lightTextColor : darkTextColor)
+    .style('fill', darkMode === 'enabled' || darkMode === true ? lightTextColor : darkTextColor)
     .attr('text-anchor', 'end')
     .attr('transform', null)
     .text(function (d) {
