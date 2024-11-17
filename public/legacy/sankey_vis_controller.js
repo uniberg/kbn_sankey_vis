@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import d3 from 'd3';
 import 'd3-plugins-sankey';
-import { filterNodesAndLinks } from '../lib/filter';
+import { filterNodesAndLinks, matchColumnFromValue } from '../lib/filter';
+import { buildQueryFilter } from '@kbn/es-query';
+
 let observeResize = require('../lib/observe_resize');
 
 function KbnSankeyVisController($scope, $element, config) {
@@ -100,16 +102,19 @@ function KbnSankeyVisController($scope, $element, config) {
     .attr('transform', function (d) {
       return 'translate(' + d.x + ',' + d.y + ')';
     })
-    .call(d3.behavior.drag()
-    .origin(function (d) {
-      return d;
-    })
-    .on('dragstart', function () {
-      this.parentNode.appendChild(this);
-    })
-    .on('drag', dragmove))
+    // .call(d3.behavior.drag()
+    // .origin(function (d) {
+    //   return d;
+    // })
+    // .on('dragstart', function () {
+    //   this.parentNode.appendChild(this);
+    // })
+    // .on('drag', dragmove))
     // OQMod: Highlight the set of links coming from a node
     .on("mouseover", function(d) {
+      d3.select(this)
+        .style("cursor", "pointer")
+        .style("fill", "transparent");
       link
         .transition()
         .duration(300)
@@ -118,10 +123,16 @@ function KbnSankeyVisController($scope, $element, config) {
         });
     })
     .on("mouseleave", function(d) {
+      d3.select(this)
+        .style("cursor", "default")
+        .style("fill", "transparent");
       link
         .transition()
         .duration(300)
         .style("stroke-opacity", 0.2);
+    })
+    .on("click", function(d) {
+      _query_filter(d);
     });
 
     node.append('rect')
@@ -254,6 +265,42 @@ function KbnSankeyVisController($scope, $element, config) {
     }
   });
 
+  // @skarjoss: Query filters
+  let _query_filter = function (d)
+  {
+    // Get the clicked value and original data
+    let filteredValue = d.name;
+    let columnMatch = matchColumnFromValue(
+      filteredValue, 
+      $scope.esResponse.tables[0].columns, $scope.esResponse.tables[0].rows
+    );
+    if(!columnMatch){return;}
+    
+    // Defines the required variables
+    // Define the index
+    let filterIndex = columnMatch.meta.index;
+    // Define the field for the filter
+    let filterField = columnMatch.meta.field;
+    // Define the alias for the filter
+    let filterAlias = columnMatch.name + ': "' + filteredValue + '"';
+    // Define the query clause
+    let filterQueryClause = ['terms', 'number', 'string'].includes(columnMatch.meta.params.id)
+                              ? 'match_phrase' 
+                              : columnMatch.meta.params.id;
+    // Define the filter query
+    let query = {
+      //"match_phrase": {[filterField] : filteredValue}
+      [filterQueryClause]: {[filterField] : filteredValue}
+    }
+
+    // Build the query filter
+    const query_filter = buildQueryFilter(query, filterIndex, filterAlias);
+    // Apply the query filter
+    $scope.$parent.filter({
+      name: 'applyFilter',
+      data: { filters: [ query_filter ] }
+    });
+  }
 }
 
 export { KbnSankeyVisController };
