@@ -44,6 +44,7 @@ return {
   },
   editorConfig: {
     optionsTemplate: SankeyOptions,
+    enableDataViewChange: true, // Allows to change data view on existing Sankey
     schemas: [
       {
         group: AggGroupNames.Metrics,
