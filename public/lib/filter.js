@@ -190,6 +190,33 @@ module.exports = (function () {
     }
   }
 
+  /**
+   * author: skarjoss
+   * Matches the filtered value in row/column agg.
+   */
+  function matchColumnFromValue(filteredValue, columns, rows)
+  {
+    // From the original columns/rows data, keep only bucket schema aggs
+    columns         = columns.filter(item => item.aggConfig.schema === "bucket");
+    let columnsIds  = columns.map(item => item.id);
+    rows            = rows.map(item => {
+      return Object.fromEntries(
+          Object.entries(item).filter(([key]) => columnsIds.includes(key))
+      );
+    });
+    
+    // In rows, find key/value with the filtered value
+    let rowMatch = rows.find(obj => Object.values(obj).includes(filteredValue));
+    let keyMatch = rowMatch ? (Object.keys(rowMatch).find(k => rowMatch[k] === filteredValue)) : null;
+    if(!rowMatch || !keyMatch){return undefined;}
+
+    // In columns, find the id element for the previuos row match
+    let columnMatch = columns.find(item => (item.id === keyMatch));
+
+    return columnMatch;
+
+  }
+
   return { 
     _isNodeExist,
     _getNode,
@@ -200,6 +227,7 @@ module.exports = (function () {
     _updateLinks,
     _convertNodesMapToArray,
 
-    filterNodesAndLinks
+    filterNodesAndLinks,
+    matchColumnFromValue
   };
 }());
