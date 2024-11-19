@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import d3 from 'd3';
 import 'd3-plugins-sankey';
-import { filterNodesAndLinks } from '../lib/filter';
+import { filterNodesAndLinks, matchColumnFromValue, buildFilterQuery, buildComplexQuery } from '../lib/filter';
+import { buildQueryFilter, buildEsQuery } from '@kbn/es-query';
+
 let observeResize = require('../lib/observe_resize');
 
 function KbnSankeyVisController($scope, $element, config) {
@@ -78,6 +80,9 @@ function KbnSankeyVisController($scope, $element, config) {
     })
     .on('mouseout', function() {
       d3.select(this).style('stroke-opacity', 0.2);
+    })
+    .on("click", function(d) {
+      _query_node(d);
     });
 
     link.append('title')
@@ -86,10 +91,10 @@ function KbnSankeyVisController($scope, $element, config) {
     });
 
     // OQMod, gets total of source nodes
-    var total = d3.sum(energy.nodes, function(d) {
-      if (d.targetLinks.length>0) 
+    const total = d3.sum(energy.nodes, function(d) {
+      if (d.targetLinks.length>0)
          return 0; //node is not source, exclude it from the total
-      else 
+      else
          return d.value; //node is a source: add its value to the sum
     });
 
@@ -100,16 +105,11 @@ function KbnSankeyVisController($scope, $element, config) {
     .attr('transform', function (d) {
       return 'translate(' + d.x + ',' + d.y + ')';
     })
-    .call(d3.behavior.drag()
-    .origin(function (d) {
-      return d;
-    })
-    .on('dragstart', function () {
-      this.parentNode.appendChild(this);
-    })
-    .on('drag', dragmove))
     // OQMod: Highlight the set of links coming from a node
     .on("mouseover", function(d) {
+      d3.select(this)
+        .style("cursor", "pointer")
+        .style("fill", "transparent");
       link
         .transition()
         .duration(300)
@@ -118,12 +118,27 @@ function KbnSankeyVisController($scope, $element, config) {
         });
     })
     .on("mouseleave", function(d) {
+      d3.select(this)
+        .style("cursor", "default")
+        .style("fill", "transparent");
       link
         .transition()
         .duration(300)
         .style("stroke-opacity", 0.2);
     });
-
+    if ($scope.visParams.dragAndDrop) {
+      node.call(d3.behavior.drag()
+      .origin(function(d) { return d; })
+      .on('dragstart', function() {
+        this.parentNode.appendChild(this);
+      })
+      .on('drag', dragmove));
+    } else {
+      node.on('click', function(d) {
+        _query_path(d)
+      })
+      .on('.drag', null);
+    }
     node.append('rect')
     .attr('height', function (d) {
       return d.dy;
@@ -133,10 +148,12 @@ function KbnSankeyVisController($scope, $element, config) {
       d.color = color(d.name);
       return d.color;
     })
-    .attr("rx", 2) // OQMod: Rounded all corners
+    .attr("rx", 2)
+    // OQMod: Rounded all corners
     /*.style('stroke', function (d) {
       return getConfig('theme:darkMode') ? d3.rgb(d.color).brighter(2) : d3.rgb(d.color).darker(2);
-    })*/ // OQMod: Hide stroke border
+    })*/
+    // OQMod: Hide stroke border
     .append('title')
     .text(function (d) {
       return d.name + '\n' + d.value + ' ('+(Math.round(d.value/total * 1000) / 10).toFixed(1)+'%)';
@@ -254,6 +271,32 @@ function KbnSankeyVisController($scope, $element, config) {
     }
   });
 
+  // @skarjoss: Query filters
+  // refactored by @ch-bas
+  let _query_node = function (d) {
+    const queryFilter = buildComplexQuery(d.source.name, d.target.name, buildEsQuery, $scope.esResponse.tables[0]);
+    if (!queryFilter) return;
+
+    $scope.$parent.filter({
+      name: 'applyFilter',
+      data: { filters: [queryFilter] },
+    });
+  };
+  let _query_path = function (d) {
+    const columnMatch = matchColumnFromValue(
+      d.name,
+      $scope.esResponse.tables[0].columns,
+      $scope.esResponse.tables[0].rows
+    );
+
+    const queryFilter = buildFilterQuery(d.name, columnMatch, buildQueryFilter, buildEsQuery);
+    if (!queryFilter) return;
+
+    $scope.$parent.filter({
+      name: 'applyFilter',
+      data: { filters: [queryFilter] },
+    });
+  };
 }
 
 export { KbnSankeyVisController };
