@@ -2,13 +2,13 @@
  * This function filters the input data and removes all invalid values.
  * It removes all links with an empty or 0 value, all nodes without an link and all links with not existing nodes.
  *
- * The input parameter links contains two fields source and target which reference the 
+ * The input parameter links contains two fields source and target which reference the
  * corrisponding nodes in the nodes array.
  * The removal of one node, makes an update of all related links necessary.
  * To avoid this, we filter all invalid links and remove all unused nodes from nodes array.
- * We also used a reference node map to update the source and target nodes in the links. 
+ * We also used a reference node map to update the source and target nodes in the links.
  * After the filtering the map is converted back into the initial array structure.
- * 
+ *
  * #Definitions:
  * ##Input Parameter
  *
@@ -27,7 +27,7 @@
  *
  * NODE_INDEX: {number}
  *    A node index is the index of a node in the nodes array.
- * 
+ *
  * ##Inner Data Structures
  *
  * NODE_MAP: {map: NODE_INDEX => NEW_NODE}
@@ -35,12 +35,12 @@
  *
  * REF_NODE_MAP: {map: NODE_INDEX => NODE_INDEX}
  *    Mapping of the old node index to the new node index.
- *    After removing nodes in the nodes array, all node indices will be changed. 
+ *    After removing nodes in the nodes array, all node indices will be changed.
  *    To update the node references in the links, we create a map which reference the old node index
  *    to the new node index.
- * 
+ *
  * NEW_NODE: { name: <string>, valid: <boolean> }
- *    Copy of NODE with an additional attribute `valid`. 
+ *    Copy of NODE with an additional attribute `valid`.
  *    The valid attribute is a flag to show which nodes is include inner the links array.
  */
 module.exports = (function () {
@@ -66,7 +66,7 @@ module.exports = (function () {
   function _getNode(nodesMap, index) { return nodesMap.get(index) || {}; }
 
   /**
-   * Add valid attribute to each node, which relates to a link. 
+   * Add valid attribute to each node, which relates to a link.
    *
    * @private
    * @param {NODE_MAP} nodesmap - The nodes map.
@@ -163,7 +163,7 @@ module.exports = (function () {
   function _convertNodesMapToArray(nodesMap, refNodesMap) {
     const nodes = [];
     nodesMap.forEach(({name, valid}, key) => {
-      if (valid) { 
+      if (valid) {
         const newIndex = refNodesMap.get(key);
         nodes[newIndex] = { name };
       }
@@ -184,7 +184,7 @@ module.exports = (function () {
     const refNodesMap = _generateRefNodesMap(nodesMap);
     const updatedLinks = _updateLinks(filteredLinks, refNodesMap);
     const filteredNodes = _convertNodesMapToArray(nodesMap, refNodesMap);
-    return { 
+    return {
       nodes: filteredNodes,
       links: updatedLinks
     }
@@ -204,7 +204,7 @@ module.exports = (function () {
           Object.entries(item).filter(([key]) => columnsIds.includes(key))
       );
     });
-    
+
     // In rows, find key/value with the filtered value
     let rowMatch = rows.find(obj => Object.values(obj).includes(filteredValue));
     let keyMatch = rowMatch ? (Object.keys(rowMatch).find(k => rowMatch[k] === filteredValue)) : null;
@@ -216,8 +216,36 @@ module.exports = (function () {
     return columnMatch;
 
   }
+  // @skarjoss: Query filters
+  function buildFilterQuery(filteredValue, columnMatch, buildQueryFilter) {
+    if (!columnMatch) return null;
 
-  return { 
+    let filterField = columnMatch.meta.field;
+    let filterIndex = columnMatch.meta.index;
+    let filterAlias = `${columnMatch.name}: "${filteredValue}"`;
+    let filterQueryClause = ['terms', 'number', 'string'].includes(columnMatch.meta.params.id)
+      ? 'match_phrase'
+      : columnMatch.meta.params.id;
+
+    let query = { [filterQueryClause]: { [filterField]: filteredValue } };
+    return buildQueryFilter(query, filterIndex, filterAlias);
+  }
+
+  function buildComplexQuery(source, target, buildEsQuery, data) {
+    let columnMatch = matchColumnFromValue(source, data.columns, data.rows);
+    let destMatch = matchColumnFromValue(target, data.columns, data.rows);
+    if (!columnMatch || !destMatch) return null;
+
+    let queries = [
+      { meta: columnMatch.meta, match_phrase: { [columnMatch.meta.field]: source } },
+      { meta: destMatch.meta, match_phrase: { [destMatch.meta.field]: target } },
+    ];
+
+    const index = data.columns[0].aggConfig.aggConfigs.indexPattern;
+    return buildEsQuery(index, null, queries);
+  }
+
+  return {
     _isNodeExist,
     _getNode,
     _markUsedNodes,
@@ -226,7 +254,8 @@ module.exports = (function () {
     _generateRefNodesMap,
     _updateLinks,
     _convertNodesMapToArray,
-
+    buildComplexQuery,
+    buildFilterQuery,
     filterNodesAndLinks,
     matchColumnFromValue
   };
