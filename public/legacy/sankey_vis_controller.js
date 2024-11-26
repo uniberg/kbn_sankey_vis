@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import d3 from 'd3';
 import 'd3-plugins-sankey';
-import { filterNodesAndLinks, matchColumnFromValue, buildFilterQuery, buildComplexQuery } from '../lib/filter';
+import { filterNodesAndLinks, matchColumnFromValue, buildFilterQuery, buildComplexQuery, getSelectedColumnIndex } from '../lib/filter';
 import { buildQueryFilter, buildEsQuery } from '@kbn/es-query';
 
 let observeResize = require('../lib/observe_resize');
@@ -82,7 +82,7 @@ function KbnSankeyVisController($scope, $element, config) {
       d3.select(this).style('stroke-opacity', 0.2);
     })
     .on("click", function(d) {
-      _query_node(d);
+      _query_path(d, energy.nodes);
     });
 
     link.append('title')
@@ -135,7 +135,7 @@ function KbnSankeyVisController($scope, $element, config) {
       .on('drag', dragmove));
     } else {
       node.on('click', function(d) {
-        _query_path(d)
+        _query_node(d, energy.nodes)
       })
       .on('.drag', null);
     }
@@ -273,8 +273,11 @@ function KbnSankeyVisController($scope, $element, config) {
 
   // @skarjoss: Query filters
   // refactored by @ch-bas
-  let _query_node = function (d) {
-    const queryFilter = buildComplexQuery(d.source.name, d.target.name, buildEsQuery, $scope.esResponse.tables[0]);
+  let _query_path = function (selectedNode, nodes) {
+    let columnMatch = matchColumnFromValue($scope.esResponse.tables[0].columns, getSelectedColumnIndex(selectedNode.source, nodes));
+    let destMatch = matchColumnFromValue($scope.esResponse.tables[0].columns, getSelectedColumnIndex(selectedNode.target, nodes));
+    const index = $scope.esResponse.tables[0].columns[0].aggConfig.aggConfigs.indexPattern;
+    const queryFilter = buildComplexQuery(selectedNode.source, selectedNode.target, buildEsQuery, columnMatch, destMatch, index);
     if (!queryFilter) return;
 
     $scope.$parent.filter({
@@ -282,14 +285,13 @@ function KbnSankeyVisController($scope, $element, config) {
       data: { filters: [queryFilter] },
     });
   };
-  let _query_path = function (d) {
+  let _query_node = function (selectedNode, nodes) {
     const columnMatch = matchColumnFromValue(
-      d.name,
       $scope.esResponse.tables[0].columns,
-      $scope.esResponse.tables[0].rows
+      getSelectedColumnIndex(selectedNode, nodes)
     );
 
-    const queryFilter = buildFilterQuery(d.name, columnMatch, buildQueryFilter, buildEsQuery);
+    const queryFilter = buildFilterQuery(selectedNode, columnMatch, buildQueryFilter, buildEsQuery);
     if (!queryFilter) return;
 
     $scope.$parent.filter({
