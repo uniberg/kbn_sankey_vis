@@ -191,30 +191,40 @@ module.exports = (function () {
   }
 
   /**
-   * author: skarjoss
-   * Matches the filtered value in row/column agg.
+   * Get the index of the selected node in the sankey vis.
+   * @param {object} selectedNode - The selected node.
+   * @param {array<NODE>} nodeList - The links array.
+   * @returns {number} - Index of the selected node.
    */
-  function matchColumnFromValue(filteredValue, columns, rows)
+  function getSelectedColumnIndex(selectedNode, nodeList) {
+    let counter = 0;
+    const valueMap = new Map();
+
+    nodeList.forEach(value => {
+      if (!valueMap.has(value.x)) {
+        counter++;
+        valueMap.set(value.x, counter);
+      }
+    });
+    let key;
+    if (valueMap.has(selectedNode.x)) {
+      key = valueMap.get(selectedNode.x);
+    }
+    return key;
+  }
+  /**
+   * author: skarjoss
+   * refactor: ch-bas
+   * Matches the filtered value in row/column agg.
+   * @param {array<column>} columns - Array containing the agg columns.
+   * @param {number} key - The index of the selected node.
+   * @returns {object} - The agg column corresponding to the selected node.
+   */
+  function matchColumnFromValue(columns, key)
   {
     // From the original columns/rows data, keep only bucket schema aggs
-    columns         = columns.filter(item => item.aggConfig.schema === "bucket");
-    let columnsIds  = columns.map(item => item.id);
-    rows            = rows.map(item => {
-      return Object.fromEntries(
-          Object.entries(item).filter(([key]) => columnsIds.includes(key))
-      );
-    });
-
-    // In rows, find key/value with the filtered value
-    let rowMatch = rows.find(obj => Object.values(obj).includes(filteredValue));
-    let keyMatch = rowMatch ? (Object.keys(rowMatch).find(k => rowMatch[k] === filteredValue)) : null;
-    if(!rowMatch || !keyMatch){return undefined;}
-
-    // In columns, find the id element for the previuos row match
-    let columnMatch = columns.find(item => (item.id === keyMatch));
-
-    return columnMatch;
-
+    columns = columns.filter(item => item.aggConfig.schema === "bucket");
+    return columns[key-1];
   }
   // @skarjoss: Query filters
   function buildFilterQuery(filteredValue, columnMatch, buildQueryFilter) {
@@ -222,26 +232,23 @@ module.exports = (function () {
 
     let filterField = columnMatch.meta.field;
     let filterIndex = columnMatch.meta.index;
-    let filterAlias = `${columnMatch.name}: "${filteredValue}"`;
+    let filterAlias = `${columnMatch.name}: "${filteredValue.name}"`;
     let filterQueryClause = ['terms', 'number', 'string'].includes(columnMatch.meta.params.id)
       ? 'match_phrase'
       : columnMatch.meta.params.id;
 
-    let query = { [filterQueryClause]: { [filterField]: filteredValue } };
+    let query = { [filterQueryClause]: { [filterField]: filteredValue.name } };
     return buildQueryFilter(query, filterIndex, filterAlias);
   }
-
-  function buildComplexQuery(source, target, buildEsQuery, data) {
-    let columnMatch = matchColumnFromValue(source, data.columns, data.rows);
-    let destMatch = matchColumnFromValue(target, data.columns, data.rows);
+  // build an ES match_phrase query
+  function buildComplexQuery(source, target, buildEsQuery, columnMatch, destMatch, index) {
     if (!columnMatch || !destMatch) return null;
 
     let queries = [
-      { meta: columnMatch.meta, match_phrase: { [columnMatch.meta.field]: source } },
-      { meta: destMatch.meta, match_phrase: { [destMatch.meta.field]: target } },
+      { meta: columnMatch.meta, match_phrase: { [columnMatch.meta.field]: source.name } },
+      { meta: destMatch.meta, match_phrase: { [destMatch.meta.field]: target.name } },
     ];
 
-    const index = data.columns[0].aggConfig.aggConfigs.indexPattern;
     return buildEsQuery(index, null, queries);
   }
 
@@ -257,6 +264,7 @@ module.exports = (function () {
     buildComplexQuery,
     buildFilterQuery,
     filterNodesAndLinks,
-    matchColumnFromValue
+    matchColumnFromValue,
+    getSelectedColumnIndex
   };
 }());
