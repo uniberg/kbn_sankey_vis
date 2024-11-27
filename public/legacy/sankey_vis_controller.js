@@ -91,7 +91,7 @@ function KbnSankeyVisController($scope, $element, config) {
     });
 
     // OQMod, gets total of source nodes
-    const total = d3.sum(energy.nodes, function(d) {
+    var total = d3.sum(energy.nodes, function(d) {
       if (d.targetLinks.length>0)
          return 0; //node is not source, exclude it from the total
       else
